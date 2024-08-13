@@ -4,6 +4,7 @@
     margin: 0 auto;
 }
 
+/* Navigation Section */
 /* Temporary changes to remind me of the access to the default Bootstrap classes */
 .navbar {
     background-color: #007bff !important;
@@ -15,6 +16,19 @@
 
 .navbar .nav-link:hover {
     background-color: #0056b3 !important;
+}
+
+/* Form Section */
+
+/* Center placeholder text */
+input::placeholder {
+    text-align: center;
+}
+
+#subnetMask, #wildcardMask {
+    background-color: #e9ecef;
+    color: grey;
+    pointer-events: none;
 }
 
 /* Media Queries */
