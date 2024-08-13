@@ -1,0 +1,31 @@
+/* Custom class container limiting the size to 60% of the screen */
+.custom-container {
+    width: 60%;
+    margin: 0 auto;
+}
+
+/* Temporary changes to remind me of the access to the default Bootstrap classes */
+.navbar {
+    background-color: #007bff !important;
+}
+
+.navbar .nav-link {
+    color: #ffffff !important;
+}
+
+.navbar .nav-link:hover {
+    background-color: #0056b3 !important;
+}
+
+/* Media Queries */
+@media screen and (max-width: 992px) {
+    #navbarNav {
+        text-align: right !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container.custom-container {
+        width: 100% !important;
+    }
+}
