@@ -1,5 +1,7 @@
 // Waits for the DOM to be finished loading
 document.addEventListener ("DOMContentLoaded", function() {
+    initializeTooltips();
+    initializeCidrSelection();
 });
 
 // DOM Variables
@@ -9,76 +11,8 @@ const subnetMaskInput = document.getElementById('subnetMask');
 const wildcardMaskInput = document.getElementById('wildcardMask');
 const requiredHostsInput = document.getElementById('requiredHosts');
 
-// Initialize tooltips for all elements with 'data-bs-toggle="tooltip"'.
-document.addEventListener("DOMContentLoaded", function() {
-    // Initializes tooltips for elements with tooltips.
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-    // Checks if the CIDR dropdown exists on the page.
-    if (cidrSelect) {
-        // Calls the updateHostInputLimit function with the current CIDR value
-        updateHostInputLimit(cidrSelect.value);
-
-        // Sets up the change event listener for the CIDR selection.
-        cidrSelect.addEventListener('change', function() {
-            updateHostInputLimit(this.value);
-        });
-    } else {
-        // Log to console that no CIDR elements were found.
-        console.log('CIDR select element not found on this page.');
-    }
-});
-
-// Attach an event listener to the Host input field to handle user inputs.
-document.getElementById('requiredHosts').addEventListener('input', function() {
-
-    // Parse the current value of the input field into an integer.
-    const currentValue = parseInt(this.value);
-
-    // Parse the maximum value of hosts into an integer.
-    const maxValue = parseInt(this.max);
-
-    // Get the current instance of the tooltip associated with the input field.
-    let tooltipInstance = bootstrap.Tooltip.getInstance(this);
-
-    // Ensure any existing tooltip is disposed before creating a new one
-    if (tooltipInstance) {
-        tooltipInstance.dispose();
-    }
-
-    // Checks if the current input value exceeds the maximum allowed value
-    if (currentValue > maxValue) {
-        // Adjusts the current value to the maximum value
-        this.value = maxValue;
-        // Changes the title attribute in order to give the user a feedback through a tooltip
-        this.setAttribute('title', `Value adjusted to the maximum allowed: ${maxValue}`);
-
-        // This prevents the tooltip from auto-hiding when the input field is not hovered
-        tooltipInstance = new bootstrap.Tooltip(this, {
-            trigger: 'manual'
-        });
-        // Shows the tooltip
-        tooltipInstance.show();
-
-        // Set a timeout to automatically hide and dispose of the tooltip after 2 seconds
-        setTimeout(() => {
-            if (tooltipInstance) {
-                // Disposes of the tooltip
-                tooltipInstance.dispose();
-                // Clears the title attribute
-                this.setAttribute('title', '');
-            }
-        }, 2000); // 2 seconds countdown
-    } else {
-        // If the current value does not exceed the maximum value, it disposes of any leftover tooltip
-        if (tooltipInstance) {
-            tooltipInstance.dispose();
-            this.setAttribute('title', '');
-        }
-    }
-});
+// Event Listeners
+document.getElementById('requiredHosts').addEventListener('input', handleHostInputChange);
 
 /**
  * Updates the subnet mask input field based on the selected CIDR value.
@@ -142,16 +76,7 @@ function updateSubnetMask() {
  * @param {string} subnetMask - The subnet mask in dotted decimal notation
  */
 function updateWildcardMask(subnetMask) {
-    // Split the subnet mask into an array of octets
-    const maskOctets = subnetMask.split('.');
-
-    // Calculate the wildcard mask by subtracting each octet from 255
-    const wildcardOctets = maskOctets.map(octet => 255 - parseInt(octet));
-
-    // Join the wildcard octets back into a dotted decimal string
-    const wildcardMask = wildcardOctets.join('.');
-
-    // Update the Wildcard Mask input field with the calculated value
+    const wildcardMask = calculateWildcardMask(subnetMask);
     wildcardMaskInput.value = wildcardMask;
 }
 
@@ -216,4 +141,106 @@ function updateHostInputLimit(cidr) {
 
     // Indicates in the placeholder the max value of hosts possible.
     document.getElementById('requiredHosts').placeholder = "Max " + maxHosts + " hosts";
+}
+
+/**
+ * Handles input changes on the Host input field by validating and adjusting its value.
+ */
+function handleHostInputChange() {
+    const currentValue = parseInt(this.value);
+    const maxValue = parseInt(this.max);
+
+    validateAndAdjustInput(this, currentValue, maxValue);
+}
+
+/**
+ * Validates the input against the maximum value and adjusts it if necessary.
+ * Also manages tooltips to provide feedback.
+ *
+ * @param {HTMLElement} inputElement - The input field element.
+ * @param {number} currentValue - The current value of the input field.
+ * @param {number} maxValue - The maximum allowed value.
+ */
+function validateAndAdjustInput(inputElement, currentValue, maxValue) {
+    // Gets or creates a tooltip instance.
+    let tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
+    
+    if (currentValue > maxValue) {
+        inputElement.value = maxValue;
+        inputElement.setAttribute('title', `Value adjusted to the maximum allowed: ${maxValue}`);
+
+        // Configures the tooltip for manual trigger and shows it.
+        tooltipInstance = new bootstrap.Tooltip(inputElement, { trigger: 'manual' });
+        tooltipInstance.show();
+
+        // Schedules tooltip disposal and clear the title after 2 seconds.
+        setTimeout(() => {
+            if (tooltipInstance) {
+                tooltipInstance.dispose();
+                inputElement.setAttribute('title', '');
+            }
+        }, 2000);
+    } else {
+        // Disposes of any existing tooltip and clear the title if the value is within the limit.
+        if (tooltipInstance) {
+            tooltipInstance.dispose();
+            inputElement.setAttribute('title', '');
+        }
+    }
+}
+
+/**
+ * Initializes Bootstrap tooltips for elements with the `data-bs-toggle="tooltip"` attribute.
+ * 
+ * This function selects all elements in the DOM that have the `data-bs-toggle="tooltip"` attribute
+ * and initializes a Bootstrap tooltip instance for each of them.
+ */
+function initializeTooltips() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+}
+
+/**
+ * Initializes the CIDR selection behavior on the page.
+ * 
+ * This function checks if the CIDR dropdown exists on the page. If it does, it 
+ * calls the `updateHostInputLimit` function with the current CIDR value and 
+ * sets up an event listener for changes to the CIDR selection. If the CIDR 
+ * dropdown is not found, it logs a message to the console.
+ * 
+ * @param {HTMLElement} cidrSelect - The CIDR dropdown element.
+ */
+function initializeCidrSelection() {
+    if (cidrSelect) {
+        // Calls the updateHostInputLimit function with the current CIDR value.
+        updateHostInputLimit(cidrSelect.value);
+
+        // Sets up the change event listener for the CIDR selection.
+        cidrSelect.addEventListener('change', function () {
+            updateHostInputLimit(this.value);
+        });
+    } else {
+        // Log to console that no CIDR elements were found.
+        console.log('CIDR select element not found on this page.');
+    }
+}
+
+// BUSINESS LOGIC --------------------------
+/**
+ * Calculates the wildcard mask for a given subnet mask.
+ * 
+ * This method splits the subnet mask into octets, subtracts each from 255 to get the
+ * wildcard values, and then joins them back into a dotted decimal string.
+ * 
+ * @param {string} subnetMask - The subnet mask in dotted decimal format.
+ * @return {string} The calculated wildcard mask in dotted decimal format.
+ */
+function calculateWildcardMask(subnetMask) {
+    const maskOctets = subnetMask.split('.');
+    const wildcardOctets = maskOctets.map(octet => 255 - parseInt(octet));
+    const wildcardMask = wildcardOctets.join('.');
+
+    return wildcardMask
 }
