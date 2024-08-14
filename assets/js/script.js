@@ -13,8 +13,8 @@ const subnetMaskInput = document.getElementById('subnetMask');
 const wildcardMaskInput = document.getElementById('wildcardMask');
 const requiredHostsInput = document.getElementById('requiredHosts');
 
-document.addEventListener("DOMContentLoaded", function() {
-    // Initialize tooltips as needed without storing references
+// Initialize tooltips for all elements with 'data-bs-toggle="tooltip"'.
+document.addEventListener("DOMContentLoaded", function() {    
     [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).forEach(function(tooltipTriggerEl) {
         new bootstrap.Tooltip(tooltipTriggerEl);
     });
@@ -147,10 +147,10 @@ function updateWildcardMask(subnetMask) {
 /**
  * Updates the maximum number of hosts input limit based on the selected CIDR.
  * This function computes the maximum allowable hosts within a subnet and adjusts the input field accordingly.
+ * If the current number of hosts exceeds the maximum value, it provides immediate feedback through tooltips.
  * @param {string} - The CIDR notation chosen by the User which gets parsed into an Integer.
  */
 function updateHostInputLimit(cidr) {
-
     // Removes the slash and parse the CIDR value as an integer.
     const cidrValue = parseInt(cidr.replace('/', ''));
     // Calculates the number of bits available for host addresses.
@@ -163,13 +163,43 @@ function updateHostInputLimit(cidr) {
     // Sets the maximum value for the input of hosts.
     requiredHostsInput.max = maxHosts;
     
-    // Check if the current input value exceeds the new maximum
-    if (parseInt(requiredHostsInput.value) > maxHosts) {
-        // If the current value is greater than maxHosts, update it to maxHosts
-        requiredHostsInput.value = maxHosts;
-    }
+    // Gets existing tooltip instance.
+    let tooltipInstance = bootstrap.Tooltip.getInstance(requiredHostsInput);
 
-    // Optional: Indicates in the placeholder the max value of hosts.
-    // Remember to remove later if not used!!
-    document.getElementById('requiredHosts').placeholder = "Max " + maxHosts + " hosts";
+    // Checks if the current input value exceeds the new maximum value.
+    if (parseInt(requiredHostsInput.value) > maxHosts) {
+        // Adjusts the input value to the maximum allowed.
+        requiredHostsInput.value = maxHosts;
+        
+        // Disposes od the old tooltip.
+        if (tooltipInstance) {
+        tooltipInstance.dispose();
+        }
+
+        // Updates the title attribute for the new tooltip content.
+        requiredHostsInput.setAttribute('title', `Value adjusted to the maximum allowed: ${maxHosts}`);
+
+        // Creates a new tooltip with the updated title.
+        tooltipInstance = new bootstrap.Tooltip(requiredHostsInput, {
+            trigger: 'manual'
+        });
+
+        // Shows the tooltip.
+        tooltipInstance.show();
+
+        // Sets a timeout to automatically hide and dispose of the tooltip after 2 seconds.
+        setTimeout(() => {
+            if (tooltipInstance) {
+                tooltipInstance.dispose();
+                requiredHostsInput.setAttribute('title', '');
+            }
+        }, 2000); // 2 seconds countdown
+    } else {
+        // If not exceeding, ensures no tooltip is displayed.
+        if (tooltipInstance) {
+            tooltipInstance.hide();
+            tooltipInstance.dispose();
+            requiredHostsInput.setAttribute('title', '');
+        }
+    }
 }
