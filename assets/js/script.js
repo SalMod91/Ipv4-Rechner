@@ -11,6 +11,7 @@ const ipAddress = document.getElementById('ipAddress')
 const cidrSelect = document.getElementById('cidrSelect');
 const subnetMaskInput = document.getElementById('subnetMask');
 const wildcardMaskInput = document.getElementById('wildcardMask');
+const requiredHostsInput = document.getElementById('requiredHosts');
 
 /**
  * Updates the subnet mask input field based on the selected CIDR value.
@@ -89,23 +90,29 @@ function updateWildcardMask(subnetMask) {
 
 /**
  * Updates the maximum number of hosts input limit based on the selected CIDR.
- * This function computes the maximum allowable hosts within a subnet.
+ * This function computes the maximum allowable hosts within a subnet and adjusts the input field accordingly.
  * @param {string} - The CIDR notation chosen by the User which gets parsed into an Integer.
  */
 function updateHostInputLimit(cidr) {
 
     // Removes the slash and parse the CIDR value as an integer.
     const cidrValue = parseInt(cidr.replace('/', ''));
-
     // Calculates the number of bits available for host addresses.
     const hostBits = 32 - cidrValue;
-
+    
     // Calculates the maximum number of hosts available within the subnet.
     // If there are no Host bits available, the maximum number of hosts is set to 0.
     const maxHosts = hostBits > 0 ? Math.pow(2, hostBits) - 2 : 0;
-    
+
     // Sets the maximum value for the input of hosts.
-    document.getElementById('requiredHosts').max = maxHosts;
+    requiredHostsInput.max = maxHosts;
+    
+    // Check if the current input value exceeds the new maximum
+    if (parseInt(requiredHostsInput.value) > maxHosts) {
+        // If the current value is greater than maxHosts, update it to maxHosts
+        requiredHostsInput.value = maxHosts;
+    }
+
     // Optional: Indicates in the placeholder the max value of hosts.
     // Remember to remove later if not used!!
     document.getElementById('requiredHosts').placeholder = "Max " + maxHosts + " hosts";
