@@ -13,6 +13,19 @@ const subnetMaskInput = document.getElementById('subnetMask');
 const wildcardMaskInput = document.getElementById('wildcardMask');
 const requiredHostsInput = document.getElementById('requiredHosts');
 
+// Attach an event listener to the Host input field to handle user inputs.
+document.getElementById('requiredHosts').addEventListener('input', function() {
+    // Parse the input value and maximum value as integers
+    const currentValue = parseInt(this.value);
+    const maxValue = parseInt(this.max);
+
+    // Check if the input value exceeds the maximum allowed value
+    if (currentValue > maxValue) {
+        // If so, set the input value to the maximum allowable hosts
+        this.value = maxValue;
+    }
+});
+
 /**
  * Updates the subnet mask input field based on the selected CIDR value.
  *
