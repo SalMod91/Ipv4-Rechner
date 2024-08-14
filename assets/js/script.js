@@ -13,16 +13,59 @@ const subnetMaskInput = document.getElementById('subnetMask');
 const wildcardMaskInput = document.getElementById('wildcardMask');
 const requiredHostsInput = document.getElementById('requiredHosts');
 
+document.addEventListener("DOMContentLoaded", function() {
+    // Initialize tooltips as needed without storing references
+    [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).forEach(function(tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+
 // Attach an event listener to the Host input field to handle user inputs.
 document.getElementById('requiredHosts').addEventListener('input', function() {
-    // Parse the input value and maximum value as integers
+
+    // Parse the current value of the input field into an integer.
     const currentValue = parseInt(this.value);
+
+    // Parse the maximum value of hosts into an integer.
     const maxValue = parseInt(this.max);
 
-    // Check if the input value exceeds the maximum allowed value
+    // Get the current instance of the tooltip associated with the input field.
+    let tooltipInstance = bootstrap.Tooltip.getInstance(this);
+
+    // Ensure any existing tooltip is disposed before creating a new one
+    if (tooltipInstance) {
+        tooltipInstance.dispose();
+    }
+
+    // Checks if the current input value exceeds the maximum allowed value
     if (currentValue > maxValue) {
-        // If so, set the input value to the maximum allowable hosts
+        // Adjusts the current value to the maximum value
         this.value = maxValue;
+        // Changes the title attribute in order to give the user a feedback through a tooltip
+        this.setAttribute('title', `Value adjusted to the maximum allowed: ${maxValue}`);
+
+        // This prevents the tooltip from auto-hiding when the input field is not hovered
+        tooltipInstance = new bootstrap.Tooltip(this, {
+            trigger: 'manual'
+        });
+        // Shows the tooltip
+        tooltipInstance.show();
+
+        // Set a timeout to automatically hide and dispose of the tooltip after 2 seconds
+        setTimeout(() => {
+            if (tooltipInstance) {
+                // Disposes of the tooltip
+                tooltipInstance.dispose();
+                // Clears the title attribute
+                this.setAttribute('title', '');
+            }
+        }, 2000); // 2 seconds countdown
+    } else {
+        // If the current value does not exceed the maximum value, it disposes of any leftover tooltip
+        if (tooltipInstance) {
+            tooltipInstance.dispose();
+            this.setAttribute('title', '');
+        }
     }
 });
 
