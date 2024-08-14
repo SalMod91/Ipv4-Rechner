@@ -94,17 +94,19 @@ function updateWildcardMask(subnetMask) {
  */
 function updateHostInputLimit(cidr) {
 
-    // Remove the slash and parse the CIDR value as an integer
+    // Removes the slash and parse the CIDR value as an integer.
     const cidrValue = parseInt(cidr.replace('/', ''));
 
-    // Calculate how many bits are for hosts
+    // Calculates the number of bits available for host addresses.
     const hostBits = 32 - cidrValue;
 
-    // Compute the maximum number of hosts
-    const maxHosts = Math.pow(2, hostBits) - 2;
+    // Calculates the maximum number of hosts available within the subnet.
+    // If there are no Host bits available, the maximum number of hosts is set to 0.
+    const maxHosts = hostBits > 0 ? Math.pow(2, hostBits) - 2 : 0;
     
-    // Set the maximum value for the input
+    // Sets the maximum value for the input of hosts.
     document.getElementById('requiredHosts').max = maxHosts;
-    // Optional: Update placeholder to indicate max value
+    // Optional: Indicates in the placeholder the max value of hosts.
+    // Remember to remove later if not used!!
     document.getElementById('requiredHosts').placeholder = "Max " + maxHosts + " hosts";
 }
