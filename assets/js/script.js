@@ -2,10 +2,6 @@
 document.addEventListener ("DOMContentLoaded", function() {
 });
 
-document.getElementById('cidrSelect').addEventListener('change', function() {
-    updateHostInputLimit(this.value);
-});
-
 // DOM Variables
 const ipAddress = document.getElementById('ipAddress')
 const cidrSelect = document.getElementById('cidrSelect');
@@ -14,10 +10,25 @@ const wildcardMaskInput = document.getElementById('wildcardMask');
 const requiredHostsInput = document.getElementById('requiredHosts');
 
 // Initialize tooltips for all elements with 'data-bs-toggle="tooltip"'.
-document.addEventListener("DOMContentLoaded", function() {    
-    [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).forEach(function(tooltipTriggerEl) {
-        new bootstrap.Tooltip(tooltipTriggerEl);
+document.addEventListener("DOMContentLoaded", function() {
+    // Initializes tooltips for elements with tooltips.
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+    // Checks if the CIDR dropdown exists on the page.
+    if (cidrSelect) {
+        // Calls the updateHostInputLimit function with the current CIDR value
+        updateHostInputLimit(cidrSelect.value);
+
+        // Sets up the change event listener for the CIDR selection.
+        cidrSelect.addEventListener('change', function() {
+            updateHostInputLimit(this.value);
+        });
+    } else {
+        // Log to console that no CIDR elements were found.
+        console.log('CIDR select element not found on this page.');
+    }
 });
 
 // Attach an event listener to the Host input field to handle user inputs.
@@ -202,4 +213,7 @@ function updateHostInputLimit(cidr) {
             requiredHostsInput.setAttribute('title', '');
         }
     }
+
+    // Indicates in the placeholder the max value of hosts possible.
+    document.getElementById('requiredHosts').placeholder = "Max " + maxHosts + " hosts";
 }
