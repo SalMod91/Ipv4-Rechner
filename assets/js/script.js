@@ -10,9 +10,10 @@ const cidrSelect = document.getElementById('cidrSelect');
 const subnetMaskInput = document.getElementById('subnetMask');
 const wildcardMaskInput = document.getElementById('wildcardMask');
 const requiredHostsInput = document.getElementById('requiredHosts');
+const requiredSubnetsInput = document.getElementById('numberOfSubnets');
 
 // Event Listeners
-document.getElementById('requiredHosts').addEventListener('input', handleHostInputChange);
+requiredHostsInput.addEventListener('input', handleHostInputChange);
 
 /**
  * Updates the subnet mask input field based on the selected CIDR value.
@@ -89,6 +90,7 @@ function updateWildcardMask(subnetMask) {
 function updateHostInputLimit(cidr) {
     // Removes the slash and parse the CIDR value as an integer.
     const cidrValue = parseInt(cidr.replace('/', ''));
+    
     // Calculates the number of bits available for host addresses.
     const hostBits = 32 - cidrValue;
     
@@ -99,48 +101,13 @@ function updateHostInputLimit(cidr) {
     // Sets the maximum value for the input of hosts.
     requiredHostsInput.max = maxHosts;
     
-    // Gets existing tooltip instance.
-    let tooltipInstance = bootstrap.Tooltip.getInstance(requiredHostsInput);
-
-    // Checks if the current input value exceeds the new maximum value.
-    if (parseInt(requiredHostsInput.value) > maxHosts) {
-        // Adjusts the input value to the maximum allowed.
-        requiredHostsInput.value = maxHosts;
-        
-        // Disposes od the old tooltip.
-        if (tooltipInstance) {
-        tooltipInstance.dispose();
-        }
-
-        // Updates the title attribute for the new tooltip content.
-        requiredHostsInput.setAttribute('title', `Value adjusted to the maximum allowed: ${maxHosts}`);
-
-        // Creates a new tooltip with the updated title.
-        tooltipInstance = new bootstrap.Tooltip(requiredHostsInput, {
-            trigger: 'manual'
-        });
-
-        // Shows the tooltip.
-        tooltipInstance.show();
-
-        // Sets a timeout to automatically hide and dispose of the tooltip after 2 seconds.
-        setTimeout(() => {
-            if (tooltipInstance) {
-                tooltipInstance.dispose();
-                requiredHostsInput.setAttribute('title', '');
-            }
-        }, 2000); // 2 seconds countdown
-    } else {
-        // If not exceeding, ensures no tooltip is displayed.
-        if (tooltipInstance) {
-            tooltipInstance.hide();
-            tooltipInstance.dispose();
-            requiredHostsInput.setAttribute('title', '');
-        }
-    }
-
     // Indicates in the placeholder the max value of hosts possible.
-    document.getElementById('requiredHosts').placeholder = "Max " + maxHosts + " hosts";
+    requiredHostsInput.placeholder = "Max " + maxHosts + " hosts";
+
+    // Updates the title attribute for the new tooltip content.
+    requiredHostsInput.setAttribute('title', `Value adjusted to the maximum allowed: ${maxHosts}`);
+
+    validateAndAdjustInput(requiredHostsInput, parseInt(requiredHostsInput.value), maxHosts);
 }
 
 /**
@@ -164,26 +131,38 @@ function handleHostInputChange() {
 function validateAndAdjustInput(inputElement, currentValue, maxValue) {
     // Gets or creates a tooltip instance.
     let tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
-    
+
+    if (!tooltipInstance) {
+        // Initializes tooltip with manual trigger if not already done.
+        tooltipInstance = new bootstrap.Tooltip(inputElement, { trigger: 'manual' });
+    }
+
     if (currentValue > maxValue) {
         inputElement.value = maxValue;
         inputElement.setAttribute('title', `Value adjusted to the maximum allowed: ${maxValue}`);
 
-        // Configures the tooltip for manual trigger and shows it.
-        tooltipInstance = new bootstrap.Tooltip(inputElement, { trigger: 'manual' });
         tooltipInstance.show();
 
-        // Schedules tooltip disposal and clear the title after 2 seconds.
-        setTimeout(() => {
+        // Clears any existing timeout to prevent unwanted tooltip disposal.
+        if (inputElement.tooltipTimeout) {
+            clearTimeout(inputElement.tooltipTimeout);
+        }
+
+        // Sets a new timeout to dispose of the tooltip,
+        inputElement.tooltipTimeout = setTimeout(() => {
             if (tooltipInstance) {
                 tooltipInstance.dispose();
-                inputElement.setAttribute('title', '');
+                tooltipInstance = null;
             }
+            inputElement.setAttribute('title', '');
         }, 2000);
+
     } else {
-        // Disposes of any existing tooltip and clear the title if the value is within the limit.
+        // Disposess of any existing tooltip and clear the title if the value is within the limit.
         if (tooltipInstance) {
+            clearTimeout(inputElement.tooltipTimeout);
             tooltipInstance.dispose();
+            tooltipInstance = null;
             inputElement.setAttribute('title', '');
         }
     }
