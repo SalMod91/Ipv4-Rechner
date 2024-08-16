@@ -1,0 +1,56 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mocha Tests</title>
+    <link href="https://unpkg.com/mocha@4.0.1/mocha.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <!-- Main Navigation Bar -->
+        <nav class="navbar navbar-expand-md">
+            <div class="container custom-container">
+
+                <!-- Brand Logo and link to home -->
+                <a class="navbar-brand" href="index.html"aria-label="This logo will redirect you to the homepage">Subnet Calculator</a>
+
+                <!-- Toggler Button that appears on small screens (992px) to hide/show the navigation links -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Contains navigation links that collapse into the toggler menu on small screens (992px) -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <!-- Navigation links, aligned to the right side of the navbar -->
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Active navigation link showing the user which page they are currently on -->
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="index.html" aria-label="This link will redirect you to the homepage">Home</a>
+                        </li>
+                        <!-- Link to the subnet calculation page -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="unit_test.html" aria-label="This link will redirect you to the calculation page">Calculation</a>
+                        </li>
+                        <!-- Link to the About Us page -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" aria-label="This link will redirect you to the About Us page">About Us</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+<div id="mocha"></div>
+
+<script src="https://unpkg.com/chai@4.1.2/chai.js"></script>
+<script src="https://unpkg.com/mocha@4.0.1/mocha.js"></script>
+
+<script>mocha.setup('bdd')</script>
+<script src="assets/js/script.js"></script>
+<script src="assets/js/test.js"></script>
+
+<script>
+    mocha.checkLeaks();
+    mocha.run();
+</script>
+</body>
+</html>

@@ -97,7 +97,8 @@ function handleSubnetInputChange() {
     const maxHosts = parseInt(hostsInput.value);
 
     // Calculate the maximum possible subnets based on the number of hosts entered.
-    const maxSubnets = calculateMaxSubnets(maxHosts);
+    const cidrValue = parseInt(cidrSelect.value.replace('/', ''));
+    const maxSubnets = calculateMaxSubnets(maxHosts, cidrValue);
 
     if (numSubnets > maxSubnets) {
         // Adjust the input value and show a tooltip message
@@ -287,12 +288,11 @@ function calculateWildcardMask(subnetMask) {
  * @param {number} hostsPerSubnet - The number of hosts required per subnet, excluding the network and broadcast addresses.
  * @return {number} The maximum number of subnets that can be created. Returns at least 1 if not more.
  */
-function calculateMaxSubnets(hostsPerSubnet) {
+function calculateMaxSubnets(hostsPerSubnet, cidrValue) {
     // Calculates the number of host bits required.
     const hostBits = Math.ceil(Math.log2(hostsPerSubnet + 2));
 
     // Calculates the available bits for subnetting based on the CIDR.
-    const cidrValue = parseInt(cidrSelect.value.replace('/', ''));
     const availableBits = 32 - cidrValue;
 
     // Calculates the maximum number of subnets possible.
