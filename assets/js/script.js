@@ -12,9 +12,13 @@ const wildcardMaskInput = document.getElementById('wildcardMask');
 const hostsInput = document.getElementById('requiredHosts');
 const subnetsInput = document.getElementById('numberOfSubnets');
 
+
 // Event Listeners
 hostsInput.addEventListener('input', handleHostInputChange);
+subnetsInput.addEventListener('input', handleSubnetInputChange);
+
 cidrSelect.addEventListener('change', function () {cidrChange(this.value);});
+
 
 /**
  * Handles changes to the CIDR selection and updates subnet and wildcard masks accordingly.
@@ -68,17 +72,36 @@ function updateInputLimits(cidr) {
     // If there are no Host bits available, the maximum number of hosts is set to 0.
     const maxHosts = hostBits > 0 ? Math.pow(2, hostBits) - 2 : 0;
 
+    // Calculates the maximum number of subnets possible.
+    const maxSubnets = Math.pow(2, cidrValue) - 2;
+
     // Sets the maximum value for the input of hosts.
     hostsInput.max = maxHosts;
     // Indicates in the placeholder the max value of hosts possible.
     hostsInput.placeholder = "Max " + maxHosts + " hosts";
     validateAndAdjustInput(hostsInput, parseInt(hostsInput.value), maxHosts);
+
+    // Sets the maximum value for the input of subnets.
+    subnetsInput.max = maxSubnets;
+    // Indicates in the placeholder the max value of subnets possible.
+    subnetsInput.placeholder = "Max " + maxSubnets + " subnets";
+    validateAndAdjustInput(subnetsInput, parseInt(subnetsInput.value), maxSubnets);
 }
 
 /**
  * Handles input changes on the Host input field by validating and adjusting its value.
  */
 function handleHostInputChange() {
+    const currentValue = parseInt(this.value);
+    const maxValue = parseInt(this.max);
+
+    validateAndAdjustInput(this, currentValue, maxValue);
+}
+
+/**
+ * Handles input changes on the subnet input field by validating and adjusting its value.
+ */
+function handleSubnetInputChange() {
     const currentValue = parseInt(this.value);
     const maxValue = parseInt(this.max);
 
@@ -98,35 +121,20 @@ function validateAndAdjustInput(inputElement, currentValue, maxValue) {
     let tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
 
     if (!tooltipInstance) {
-        // Initializes tooltip with manual trigger if not already done.
-        tooltipInstance = new bootstrap.Tooltip(inputElement, { trigger: 'manual', title: 'placeholder' });
+        // Initializes tooltip.
+        tooltipInstance = new bootstrap.Tooltip(inputElement, {title: 'placeholder' });
     }
+
 
     if (currentValue > maxValue) {
         inputElement.value = maxValue;
         tooltipInstance.setContent({ '.tooltip-inner': `Value adjusted to the maximum allowed: ${maxValue}` });
         tooltipInstance.show();
 
-         // Show the tooltip only if it's not already showing
-        if (!tooltipInstance._isShown) {
-            tooltipInstance.show();
-        }
-
-        // Sets a new timeout to dispose of the tooltip,
-        inputElement.tooltipTimeout = setTimeout(() => {
-            if (tooltipInstance) {
-                tooltipInstance.dispose();
-                tooltipInstance = null;
-            }
-            inputElement.setAttribute('title', '');
-        }, 2000);
-
     } else {
-        // Disposess of any existing tooltip and clear the title if the value is within the limit.
+        // Disposes of any existing tooltip and clear the title if the value is within the limit.
         if (tooltipInstance) {
-            clearTimeout(inputElement.tooltipTimeout);
             tooltipInstance.dispose();
-            tooltipInstance = null;
             inputElement.setAttribute('title', '');
         }
     }
