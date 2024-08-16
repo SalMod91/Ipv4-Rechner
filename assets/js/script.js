@@ -9,75 +9,45 @@ const ipAddress = document.getElementById('ipAddress')
 const cidrSelect = document.getElementById('cidrSelect');
 const subnetMaskInput = document.getElementById('subnetMask');
 const wildcardMaskInput = document.getElementById('wildcardMask');
-const requiredHostsInput = document.getElementById('requiredHosts');
-const requiredSubnetsInput = document.getElementById('numberOfSubnets');
+const hostsInput = document.getElementById('requiredHosts');
+const subnetsInput = document.getElementById('numberOfSubnets');
 
 // Event Listeners
-requiredHostsInput.addEventListener('input', handleHostInputChange);
+hostsInput.addEventListener('input', handleHostInputChange);
+cidrSelect.addEventListener('change', function () {cidrChange(this.value);});
 
 /**
- * Updates the subnet mask input field based on the selected CIDR value.
- *
- * The function maps the selected CIDR to its corresponding
- * subnet mask using a dictionary.
- * When the CIDR value changes, the corresponding subnet mask is automatically updated
- * in the input field.
+ * Handles changes to the CIDR selection and updates subnet and wildcard masks accordingly.
+ * 
+ * This function computes both the subnet and wildcard masks based on the selected CIDR value.
+ * It then updates the DOM to reflect these changes.
+ * 
+ * @param {string} cidrValue - The CIDR notation value selected by the user.
  */
-function updateSubnetMask() {
-    // A dictionary that maps the CIDR values to their corresponding subnet masks
-    const cidrToMask = {
-        "/32": "255.255.255.255",
-        "/31": "255.255.255.254",
-        "/30": "255.255.255.252",
-        "/29": "255.255.255.248",
-        "/28": "255.255.255.240",
-        "/27": "255.255.255.224",
-        "/26": "255.255.255.192",
-        "/25": "255.255.255.128",
-        "/24": "255.255.255.0",
-        "/23": "255.255.254.0",
-        "/22": "255.255.252.0",
-        "/21": "255.255.248.0",
-        "/20": "255.255.240.0",
-        "/19": "255.255.224.0",
-        "/18": "255.255.192.0",
-        "/17": "255.255.128.0",
-        "/16": "255.255.0.0",
-        "/15": "255.254.0.0",
-        "/14": "255.252.0.0",
-        "/13": "255.248.0.0",
-        "/12": "255.240.0.0",
-        "/11": "255.224.0.0",
-        "/10": "255.192.0.0",
-        "/9": "255.128.0.0",
-        "/8": "255.0.0.0",
-        "/7": "254.0.0.0",
-        "/6": "252.0.0.0",
-        "/5": "248.0.0.0",
-        "/4": "240.0.0.0",
-        "/3": "224.0.0.0",
-        "/2": "192.0.0.0",
-        "/1": "128.0.0.0",
-        "/0": "0.0.0.0"
-    };
+function cidrChange(cidrValue) {
+    let subnetMask = calculateSubnetMask(cidrValue);
+    let wildcardMask = calculateWildcardMask(subnetMask);
 
-    // Update the Subnetmask input field based on CIDR selection
-    subnetMaskInput.value = cidrToMask[cidrSelect.value];
-
-    // Calculate and update the Wildcard Mask input field
-    updateWildcardMask(cidrToMask[cidrSelect.value]);
+    visualizeSubnetMask(subnetMask);
+    visualizeWildcardMask(wildcardMask);
+    updateInputLimits(cidrValue);
 }
 
 /**
- * Calculates the wildcard mask based on the subnet mask and updates the wildcard mask input field.
- *
- * Since the wildcard mask is the inverse of the subnet mask, each octet in the subnet mask is subtracted from 255
- * to get the corresponding octet in the wildcard mask.
+ * Updates the display of the subnet mask input field in the UI.
+ * 
+ * @param {string} subnetMask - The subnet mask to display, formatted as a dotted decimal string.
+ */
+function visualizeSubnetMask(subnetMask) {
+    subnetMaskInput.value = subnetMask;
+}
+
+/**
+ * Updates the display of the wildmask input field in the UI.
  *
  * @param {string} subnetMask - The subnet mask in dotted decimal notation
  */
-function updateWildcardMask(subnetMask) {
-    const wildcardMask = calculateWildcardMask(subnetMask);
+function visualizeWildcardMask(wildcardMask) {
     wildcardMaskInput.value = wildcardMask;
 }
 
@@ -87,7 +57,7 @@ function updateWildcardMask(subnetMask) {
  * If the current number of hosts exceeds the maximum value, it provides immediate feedback through tooltips.
  * @param {string} - The CIDR notation chosen by the User which gets parsed into an Integer.
  */
-function updateHostInputLimit(cidr) {
+function updateInputLimits(cidr) {
     // Removes the slash and parse the CIDR value as an integer.
     const cidrValue = parseInt(cidr.replace('/', ''));
     
@@ -99,15 +69,10 @@ function updateHostInputLimit(cidr) {
     const maxHosts = hostBits > 0 ? Math.pow(2, hostBits) - 2 : 0;
 
     // Sets the maximum value for the input of hosts.
-    requiredHostsInput.max = maxHosts;
-    
+    hostsInput.max = maxHosts;
     // Indicates in the placeholder the max value of hosts possible.
-    requiredHostsInput.placeholder = "Max " + maxHosts + " hosts";
-
-    // Updates the title attribute for the new tooltip content.
-    requiredHostsInput.setAttribute('title', `Value adjusted to the maximum allowed: ${maxHosts}`);
-
-    validateAndAdjustInput(requiredHostsInput, parseInt(requiredHostsInput.value), maxHosts);
+    hostsInput.placeholder = "Max " + maxHosts + " hosts";
+    validateAndAdjustInput(hostsInput, parseInt(hostsInput.value), maxHosts);
 }
 
 /**
@@ -134,18 +99,17 @@ function validateAndAdjustInput(inputElement, currentValue, maxValue) {
 
     if (!tooltipInstance) {
         // Initializes tooltip with manual trigger if not already done.
-        tooltipInstance = new bootstrap.Tooltip(inputElement, { trigger: 'manual' });
+        tooltipInstance = new bootstrap.Tooltip(inputElement, { trigger: 'manual', title: 'placeholder' });
     }
 
     if (currentValue > maxValue) {
         inputElement.value = maxValue;
-        inputElement.setAttribute('title', `Value adjusted to the maximum allowed: ${maxValue}`);
-
+        tooltipInstance.setContent({ '.tooltip-inner': `Value adjusted to the maximum allowed: ${maxValue}` });
         tooltipInstance.show();
 
-        // Clears any existing timeout to prevent unwanted tooltip disposal.
-        if (inputElement.tooltipTimeout) {
-            clearTimeout(inputElement.tooltipTimeout);
+         // Show the tooltip only if it's not already showing
+        if (!tooltipInstance._isShown) {
+            tooltipInstance.show();
         }
 
         // Sets a new timeout to dispose of the tooltip,
@@ -185,36 +149,80 @@ function initializeTooltips() {
  * Initializes the CIDR selection behavior on the page.
  * 
  * This function checks if the CIDR dropdown exists on the page. If it does, it 
- * calls the `updateHostInputLimit` function with the current CIDR value and 
- * sets up an event listener for changes to the CIDR selection. If the CIDR 
- * dropdown is not found, it logs a message to the console.
+ * triggers the change event manually to the first option.
  * 
- * @param {HTMLElement} cidrSelect - The CIDR dropdown element.
  */
 function initializeCidrSelection() {
     if (cidrSelect) {
-        // Calls the updateHostInputLimit function with the current CIDR value.
-        updateHostInputLimit(cidrSelect.value);
-
-        // Sets up the change event listener for the CIDR selection.
-        cidrSelect.addEventListener('change', function () {
-            updateHostInputLimit(this.value);
-        });
+        // Sets the select element's value to the first option.
+        cidrSelect.selectedIndex = 0;
+        
+        // Triggers the change event manually.
+        cidrSelect.dispatchEvent(new Event('change'));
     } else {
-        // Log to console that no CIDR elements were found.
-        console.log('CIDR select element not found on this page.');
+        console.log('CIDR select element not found or has no options.');
     }
 }
 
 // BUSINESS LOGIC --------------------------
 /**
- * Calculates the wildcard mask for a given subnet mask.
- * 
- * This method splits the subnet mask into octets, subtracts each from 255 to get the
- * wildcard values, and then joins them back into a dotted decimal string.
- * 
- * @param {string} subnetMask - The subnet mask in dotted decimal format.
- * @return {string} The calculated wildcard mask in dotted decimal format.
+ * Updates the subnet mask input field based on the selected CIDR value.
+ *
+ * The function maps the selected CIDR to its corresponding
+ * subnet mask using a dictionary.
+ * When the CIDR value changes, the corresponding subnet mask is automatically updated
+ * in the input field.
+ * @param {string} cidr - The CIDR notation for which the subnet mask is requested.
+ * @return {string} The subnet mask corresponding to the provided CIDR notation in dotted decimal format.
+ */
+function calculateSubnetMask(cidr) {
+    // A dictionary that maps the CIDR values to their corresponding subnet masks
+    const cidrToMask = {
+        "/32": "255.255.255.255",
+        "/31": "255.255.255.254",
+        "/30": "255.255.255.252",
+        "/29": "255.255.255.248",
+        "/28": "255.255.255.240",
+        "/27": "255.255.255.224",
+        "/26": "255.255.255.192",
+        "/25": "255.255.255.128",
+        "/24": "255.255.255.0",
+        "/23": "255.255.254.0",
+        "/22": "255.255.252.0",
+        "/21": "255.255.248.0",
+        "/20": "255.255.240.0",
+        "/19": "255.255.224.0",
+        "/18": "255.255.192.0",
+        "/17": "255.255.128.0",
+        "/16": "255.255.0.0",
+        "/15": "255.254.0.0",
+        "/14": "255.252.0.0",
+        "/13": "255.248.0.0",
+        "/12": "255.240.0.0",
+        "/11": "255.224.0.0",
+        "/10": "255.192.0.0",
+        "/9": "255.128.0.0",
+        "/8": "255.0.0.0",
+        "/7": "254.0.0.0",
+        "/6": "252.0.0.0",
+        "/5": "248.0.0.0",
+        "/4": "240.0.0.0",
+        "/3": "224.0.0.0",
+        "/2": "192.0.0.0",
+        "/1": "128.0.0.0",
+        "/0": "0.0.0.0"
+    };
+
+    return cidrToMask[cidr];
+}
+
+/**
+ * Calculates the wildcard mask based on the subnet mask and updates the wildcard mask input field.
+ *
+ * Since the wildcard mask is the inverse of the subnet mask, each octet in the subnet mask is subtracted from 255
+ * to get the corresponding octet in the wildcard mask.
+ *
+ * @param {string} subnetMask - The subnet mask in dotted decimal notation
  */
 function calculateWildcardMask(subnetMask) {
     const maskOctets = subnetMask.split('.');
