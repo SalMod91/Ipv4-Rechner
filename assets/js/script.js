@@ -72,20 +72,11 @@ function updateInputLimits(cidr) {
     // If there are no Host bits available, the maximum number of hosts is set to 0.
     const maxHosts = hostBits > 0 ? Math.pow(2, hostBits) - 2 : 0;
 
-    // Calculates the maximum number of subnets possible.
-    const maxSubnets = Math.pow(2, cidrValue) - 2;
-
     // Sets the maximum value for the input of hosts.
     hostsInput.max = maxHosts;
     // Indicates in the placeholder the max value of hosts possible.
     hostsInput.placeholder = "Max " + maxHosts + " hosts";
     validateAndAdjustInput(hostsInput, parseInt(hostsInput.value), maxHosts);
-
-    // Sets the maximum value for the input of subnets.
-    subnetsInput.max = maxSubnets;
-    // Indicates in the placeholder the max value of subnets possible.
-    subnetsInput.placeholder = "Max " + maxSubnets + " subnets";
-    validateAndAdjustInput(subnetsInput, parseInt(subnetsInput.value), maxSubnets);
 }
 
 /**
@@ -102,10 +93,20 @@ function handleHostInputChange() {
  * Handles input changes on the subnet input field by validating and adjusting its value.
  */
 function handleSubnetInputChange() {
-    const currentValue = parseInt(this.value);
-    const maxValue = parseInt(this.max);
+    const numSubnets = parseInt(subnetsInput.value);
+    const maxHosts = parseInt(hostsInput.value);
 
-    validateAndAdjustInput(this, currentValue, maxValue);
+    // Calculate the maximum possible subnets based on the number of hosts entered.
+    const maxSubnets = calculateMaxSubnets(maxHosts);
+
+    if (numSubnets > maxSubnets) {
+        // Adjust the input value and show a tooltip message
+        subnetsInput.value = maxSubnets;
+        const tooltipMessage = `Too many subnets for the chosen CIDR and host count. Max is ${maxSubnets}.`;
+        showTooltip(subnetsInput, tooltipMessage);
+    } else {
+        hideTooltip(subnetsInput);
+    }
 }
 
 /**
@@ -117,27 +118,29 @@ function handleSubnetInputChange() {
  * @param {number} maxValue - The maximum allowed value.
  */
 function validateAndAdjustInput(inputElement, currentValue, maxValue) {
-    // Gets or creates a tooltip instance.
-    let tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
-
-    if (!tooltipInstance) {
-        // Initializes tooltip.
-        tooltipInstance = new bootstrap.Tooltip(inputElement, {title: 'placeholder' });
-    }
-
-
     if (currentValue > maxValue) {
         inputElement.value = maxValue;
-        tooltipInstance.setContent({ '.tooltip-inner': `Value adjusted to the maximum allowed: ${maxValue}` });
-        tooltipInstance.show();
+        showTooltip(inputElement, `Value adjusted to the maximum allowed: ${maxValue}`);
 
     } else {
-        // Disposes of any existing tooltip and clear the title if the value is within the limit.
-        if (tooltipInstance) {
-            tooltipInstance.dispose();
-            inputElement.setAttribute('title', '');
-        }
+        // Hides and dispose of any existing tooltip if the value is within the limit.
+        hideTooltip(inputElement);
     }
+}
+
+/**
+ * Validates whether the specified number of subnets can accommodate at least 2 usable hosts each.
+ * 
+ * This function checks if the given number of subnets can be created while ensuring that each subnet
+ * has at least 2 usable hosts.
+ *
+ * @param {number} numSubnets - The number of subnets to validate.
+ * @param {number} maxHosts - The total number of hosts available for allocation across all subnets.
+ * @return {boolean} Returns true if each subnet can accommodate at least 2 hosts; otherwise, false.
+ */
+function validateSubnets(numSubnets, maxHosts) {
+    const hostsPerSubnet = Math.floor(maxHosts / numSubnets);
+    return hostsPerSubnet >= 2;
 }
 
 /**
@@ -169,6 +172,41 @@ function initializeCidrSelection() {
         cidrSelect.dispatchEvent(new Event('change'));
     } else {
         console.log('CIDR select element not found or has no options.');
+    }
+}
+
+/**
+ * Displays a Bootstrap tooltip with the provided message on the specified input element.
+ * The tooltip will automatically hide after 2 seconds.
+ * 
+ * @param {HTMLElement} inputElement - The input field element where the tooltip should be displayed.
+ * @param {string} message - The message to display inside the tooltip.
+ */
+function showTooltip(inputElement, message) {
+    let tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
+
+    if (!tooltipInstance) {
+        tooltipInstance = new bootstrap.Tooltip(inputElement, { title: message, trigger: 'manual' });
+    } else {
+        tooltipInstance.setContent({ '.tooltip-inner': message });
+    }
+
+    tooltipInstance.show();
+
+    setTimeout(function() {
+        tooltipInstance.hide();
+    }, 2000);
+}
+
+/**
+ * Hides and disposes an existing tooltip on the specified input element.
+ * 
+ * @param {HTMLElement} inputElement - The input field element from which the tooltip should be removed.
+ */
+function hideTooltip(inputElement) {
+    let tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
+    if (tooltipInstance) {
+        tooltipInstance.dispose();
     }
 }
 
@@ -238,4 +276,26 @@ function calculateWildcardMask(subnetMask) {
     const wildcardMask = wildcardOctets.join('.');
 
     return wildcardMask
+}
+
+/**
+ * Calculates the maximum number of subnets that can be created given the number of hosts per subnet.
+ * 
+ * This function takes into account the number of bits required to accommodate the given number of hosts 
+ * and calculates how many subnets can be created with the remaining bits based on the selected CIDR value.
+ *
+ * @param {number} hostsPerSubnet - The number of hosts required per subnet, excluding the network and broadcast addresses.
+ * @return {number} The maximum number of subnets that can be created. Returns at least 1 if not more.
+ */
+function calculateMaxSubnets(hostsPerSubnet) {
+    // Calculates the number of host bits required.
+    const hostBits = Math.ceil(Math.log2(hostsPerSubnet + 2));
+
+    // Calculates the available bits for subnetting based on the CIDR.
+    const cidrValue = parseInt(cidrSelect.value.replace('/', ''));
+    const availableBits = 32 - cidrValue;
+
+    // Calculates the maximum number of subnets possible.
+    const subnetBits = availableBits - hostBits;
+    return subnetBits >= 0 ? Math.pow(2, subnetBits) : 1;
 }
