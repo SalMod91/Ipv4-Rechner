@@ -16,6 +16,12 @@ const subnetsInput = document.getElementById('numberOfSubnets');
 // Event Listeners
 hostsInput.addEventListener('input', handleHostInputChange);
 subnetsInput.addEventListener('input', handleSubnetInputChange);
+document.getElementById('calculateButton').addEventListener('click', function() {
+
+        console.log("It works");
+
+});
+
 
 cidrSelect.addEventListener('change', function () {cidrChange(this.value);});
 
