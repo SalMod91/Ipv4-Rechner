@@ -14,14 +14,21 @@ const subnetsInput = document.getElementById('numberOfSubnets');
 
 
 // Event Listeners
+cidrSelect.addEventListener('change', function () {cidrChange(this.value);});
 hostsInput.addEventListener('input', handleHostInputChange);
 subnetsInput.addEventListener('input', handleSubnetInputChange);
 document.getElementById('calculateButton').addEventListener('click', function() {
     if (validateInputs()) {
-        console.log("It works");
+        let ipAddressValue = ipAddress.value.trim();
+        let cidrValue = cidrSelect.value.trim();
+        let hostsValue = parseInt(hostsInput.value.trim());
+        let subnetsValue = parseInt(subnetsInput.value.trim());
+
+        let results = calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue);
+        console.log(results)
     }
 });
-cidrSelect.addEventListener('change', function () {cidrChange(this.value);});
+
 
 
 // FRONT END ------------------------------------------------------------
@@ -273,8 +280,6 @@ function validateInputs() {
         return false;
     }
 
-    // Additional validations will be added later
-
     // If all validations pass.
     return true;
 }
@@ -521,4 +526,33 @@ function calculateMaxHostsPerSubnet(cidrValue, numberOfSubnets) {
     const subnetBits = Math.ceil(Math.log2(numberOfSubnets));
     const hostBits = totalHostBits - subnetBits;
     return hostBits > 0 ? Math.pow(2, hostBits) - 2 : 0;
+}
+
+/**
+ * Calculates various subnetting details based on the provided IP address, CIDR value, number of hosts, and number of subnets.
+ *
+ * This function calculates and returns key subnetting values such as the subnet mask, wildcard mask,
+ * network address, broadcast address, usable IP range, total number of hosts, and possible subnets.
+ * The calculations are based on the provided IP address, CIDR value, and optionally the number of hosts and subnets.
+ *
+ * @param {string} ipAddressValue - The IP address provided by the user in dotted decimal notation (e.g., "192.168.1.1").
+ * @param {integer} cidrValue - The CIDR value provided by the user (e.g., 24 for a /24 subnet).
+ * @param {integer} hostsValue - The number of required hosts specified by the user (optional).
+ * @param {integer} subnetsValue - The number of required subnets specified by the user (optional).
+ * @returns {Object} - An object containing the calculated subnetting values:
+ *   @property {string} subnetMask - The calculated subnet mask in dotted decimal notation.
+ *   @property {string} wildcardMask - The calculated wildcard mask in dotted decimal notation.
+ */
+function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
+    let subnetMask = calculateSubnetMask(cidrValue)
+    let wildcardMask = calculateWildcardMask(subnetMask);
+    console.log(ipAddressValue)
+    console.log(cidrValue)
+    console.log(hostsValue)
+    console.log(subnetsValue)
+
+    return {
+        subnetMask,
+        wildcardMask
+    }
 }
