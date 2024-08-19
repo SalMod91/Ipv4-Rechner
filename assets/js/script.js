@@ -90,7 +90,7 @@ function updateInputLimits(cidr) {
  */
 function handleHostInputChange() {
     let currentHosts = parseInt(hostsInput.value);
-    const cidrValue = parseInt(cidrSelect.value.replace('/', ''));
+    let cidrValue = parseInt(cidrSelect.value.replace('/', ''));
 
     // Check if the host input field is empty
     if (hostsInput.value.trim() === '') {
@@ -117,10 +117,22 @@ function handleHostInputChange() {
  * Handles input changes on the subnet input field by validating and adjusting its value.
  */
 function handleSubnetInputChange() {
-    const currentValue = parseInt(this.value);
-    const maxValue = parseInt(this.max);
+    let currentSubnets = parseInt(subnetsInput.value);
+    let cidrValue = parseInt(cidrSelect.value.replace('/', ''));
 
-    validateAndAdjustInput(this, currentValue, maxValue);
+    if (subnetsInput.value.trim() === '') {
+        const maxHosts = calculateMaxHosts(cidrValue, currentSubnets);
+        hostsInput.max = maxHosts;
+        hostsInput.placeholder = "Max " + maxHosts + " hosts";
+        return;
+    }
+
+    const maxHosts = calculateMaxHostsPerSubnet(cidrValue, currentSubnets);
+    hostsInput.max = maxHosts;
+    hostsInput.placeholder = "Max " + maxHosts + " hosts";
+
+    validateAndAdjustInput(hostsInput, parseInt(hostsInput.value), maxHosts);
+    validateAndAdjustInput(subnetsInput, currentSubnets, subnetsInput.max);
 }
 
 /**
