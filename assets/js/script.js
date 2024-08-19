@@ -252,6 +252,7 @@ function validateInputs() {
         return false;
     }
 
+    // Validates Hosts if provided.
     let hostsValue = hostsInput.value.trim();
     if (hostsValue !== '') {
         let hostsNumber = parseInt(hostsValue);
@@ -259,6 +260,13 @@ function validateInputs() {
             showError("Invalid Hosts Value.");
             return false;
         }
+    }
+
+    // Validates Subnets if provided.
+    let subnetsValue = subnetsInput.value.trim();
+    if (!validateSubnets(cidrNumber, subnetsValue)) {
+        showError("Invalid Subnets Value.");
+        return false;
     }
 
     // Additional validations will be added later
