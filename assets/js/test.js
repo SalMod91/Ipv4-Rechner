@@ -133,17 +133,136 @@ describe('calculateSubnetMask', function () {
 });
 
 describe('calculateWildcardMask', function () {
-
-  it('should return 0.0.0.0', function () {
-    chai.expect(
-      calculateWildcardMask("255.255.255.255")
-    ).to.equal("0.0.0.0");
+  it('should return "255.255.255.255" for "0.0.0.0"', function () {
+    chai.expect(calculateWildcardMask("0.0.0.0")).to.equal("255.255.255.255");
   });
 
-  it('should return 3.255.255.255', function () {
-    chai.expect(
-      calculateWildcardMask("252.0.0.0")
-    ).to.equal("3.255.255.255");
+  it('should return "127.255.255.255" for "128.0.0.0"', function () {
+    chai.expect(calculateWildcardMask("128.0.0.0")).to.equal("127.255.255.255");
+  });
+
+  it('should return "63.255.255.255" for "192.0.0.0"', function () {
+    chai.expect(calculateWildcardMask("192.0.0.0")).to.equal("63.255.255.255");
+  });
+
+  it('should return "31.255.255.255" for "224.0.0.0"', function () {
+    chai.expect(calculateWildcardMask("224.0.0.0")).to.equal("31.255.255.255");
+  });
+
+  it('should return "15.255.255.255" for "240.0.0.0"', function () {
+    chai.expect(calculateWildcardMask("240.0.0.0")).to.equal("15.255.255.255");
+  });
+
+  it('should return "7.255.255.255" for "248.0.0.0"', function () {
+    chai.expect(calculateWildcardMask("248.0.0.0")).to.equal("7.255.255.255");
+  });
+
+  it('should return "3.255.255.255" for "252.0.0.0"', function () {
+    chai.expect(calculateWildcardMask("252.0.0.0")).to.equal("3.255.255.255");
+  });
+
+  it('should return "1.255.255.255" for "254.0.0.0"', function () {
+    chai.expect(calculateWildcardMask("254.0.0.0")).to.equal("1.255.255.255");
+  });
+
+  it('should return "0.255.255.255" for "255.0.0.0"', function () {
+    chai.expect(calculateWildcardMask("255.0.0.0")).to.equal("0.255.255.255");
+  });
+
+  it('should return "0.127.255.255" for "255.128.0.0"', function () {
+    chai.expect(calculateWildcardMask("255.128.0.0")).to.equal("0.127.255.255");
+  });
+
+  it('should return "0.63.255.255" for "255.192.0.0"', function () {
+    chai.expect(calculateWildcardMask("255.192.0.0")).to.equal("0.63.255.255");
+  });
+
+  it('should return "0.31.255.255" for "255.224.0.0"', function () {
+    chai.expect(calculateWildcardMask("255.224.0.0")).to.equal("0.31.255.255");
+  });
+
+  it('should return "0.15.255.255" for "255.240.0.0"', function () {
+    chai.expect(calculateWildcardMask("255.240.0.0")).to.equal("0.15.255.255");
+  });
+
+  it('should return "0.7.255.255" for "255.248.0.0"', function () {
+    chai.expect(calculateWildcardMask("255.248.0.0")).to.equal("0.7.255.255");
+  });
+
+  it('should return "0.3.255.255" for "255.252.0.0"', function () {
+    chai.expect(calculateWildcardMask("255.252.0.0")).to.equal("0.3.255.255");
+  });
+
+  it('should return "0.1.255.255" for "255.254.0.0"', function () {
+    chai.expect(calculateWildcardMask("255.254.0.0")).to.equal("0.1.255.255");
+  });
+
+  it('should return "0.0.255.255" for "255.255.0.0"', function () {
+    chai.expect(calculateWildcardMask("255.255.0.0")).to.equal("0.0.255.255");
+  });
+
+  it('should return "0.0.127.255" for "255.255.128.0"', function () {
+    chai.expect(calculateWildcardMask("255.255.128.0")).to.equal("0.0.127.255");
+  });
+
+  it('should return "0.0.63.255" for "255.255.192.0"', function () {
+    chai.expect(calculateWildcardMask("255.255.192.0")).to.equal("0.0.63.255");
+  });
+
+  it('should return "0.0.31.255" for "255.255.224.0"', function () {
+    chai.expect(calculateWildcardMask("255.255.224.0")).to.equal("0.0.31.255");
+  });
+
+  it('should return "0.0.15.255" for "255.255.240.0"', function () {
+    chai.expect(calculateWildcardMask("255.255.240.0")).to.equal("0.0.15.255");
+  });
+
+  it('should return "0.0.7.255" for "255.255.248.0"', function () {
+    chai.expect(calculateWildcardMask("255.255.248.0")).to.equal("0.0.7.255");
+  });
+
+  it('should return "0.0.3.255" for "255.255.252.0"', function () {
+    chai.expect(calculateWildcardMask("255.255.252.0")).to.equal("0.0.3.255");
+  });
+
+  it('should return "0.0.1.255" for "255.255.254.0"', function () {
+    chai.expect(calculateWildcardMask("255.255.254.0")).to.equal("0.0.1.255");
+  });
+
+  it('should return "0.0.0.255" for "255.255.255.0"', function () {
+    chai.expect(calculateWildcardMask("255.255.255.0")).to.equal("0.0.0.255");
+  });
+
+  it('should return "0.0.0.127" for "255.255.255.128"', function () {
+    chai.expect(calculateWildcardMask("255.255.255.128")).to.equal("0.0.0.127");
+  });
+
+  it('should return "0.0.0.63" for "255.255.255.192"', function () {
+    chai.expect(calculateWildcardMask("255.255.255.192")).to.equal("0.0.0.63");
+  });
+
+  it('should return "0.0.0.31" for "255.255.255.224"', function () {
+    chai.expect(calculateWildcardMask("255.255.255.224")).to.equal("0.0.0.31");
+  });
+
+  it('should return "0.0.0.15" for "255.255.255.240"', function () {
+    chai.expect(calculateWildcardMask("255.255.255.240")).to.equal("0.0.0.15");
+  });
+
+  it('should return "0.0.0.7" for "255.255.255.248"', function () {
+    chai.expect(calculateWildcardMask("255.255.255.248")).to.equal("0.0.0.7");
+  });
+
+  it('should return "0.0.0.3" for "255.255.255.252"', function () {
+    chai.expect(calculateWildcardMask("255.255.255.252")).to.equal("0.0.0.3");
+  });
+
+  it('should return "0.0.0.1" for "255.255.255.254"', function () {
+    chai.expect(calculateWildcardMask("255.255.255.254")).to.equal("0.0.0.1");
+  });
+
+  it('should return "0.0.0.0" for "255.255.255.255"', function () {
+    chai.expect(calculateWildcardMask("255.255.255.255")).to.equal("0.0.0.0");
   });
 });
 
