@@ -238,9 +238,19 @@ function validateInputs() {
     // Validates CIDR.
     // .trim() removes any leading or trailing whitespace from the CIDR selection input.
     let cidrValue = cidrSelect.value.trim();
-    if (!validateCidr(cidrValue)) {
+    let cidrNumber = parseInt(cidrValue.replace('/', ''));
+    if (isNaN(cidrNumber) || !validateCidr(cidrValue)) {
         showError("Invalid Cidr.");
         return false;
+    }
+
+    let hostsValue = hostsInput.value.trim();
+    if (hostsValue !== '') {
+        let hostsNumber = parseInt(hostsValue);
+        if (isNaN(hostsNumber) || !validateHosts(cidrNumber, hostsNumber)) {
+            showError("Invalid Hosts Value.");
+            return false;
+        }
     }
 
     // Additional validations will be added later
@@ -295,6 +305,10 @@ function validateCidr(cidr) {
  */
 function validateHosts(cidrValue, hostsValue) {
     const maxHosts = calculateMaxHosts(cidrValue);
+
+    if ((cidrValue === 32 || cidrValue === 31) && hostsValue === 0) {
+        return true;
+    }
 
     if (hostsValue < 1 || hostsValue > maxHosts) {
         return false;

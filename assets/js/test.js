@@ -471,6 +471,14 @@ describe('validateCidr', function () {
 describe('validateHosts', function () {
   
   // Valid Hosts Tests
+  it('Valid hosts with /32 CIDR should return true (0 hosts allowed)', function () {
+    chai.expect(validateHosts(32, 0)).to.equal(true);
+  });
+
+  it('Valid hosts with /31 CIDR should return true (0 hosts allowed)', function () {
+    chai.expect(validateHosts(31, 0)).to.equal(true);
+  });
+
   it('Valid hosts with /30 CIDR should return true', function () {
     chai.expect(validateHosts(30, 2)).to.equal(true);
   });
