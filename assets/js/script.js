@@ -546,6 +546,7 @@ function calculateMaxHostsPerSubnet(cidrValue, numberOfSubnets) {
 function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
     let subnetMask = calculateSubnetMask(cidrValue)
     let wildcardMask = calculateWildcardMask(subnetMask);
+    let networkAddress = calculateNetworkAddress(ipAddressValue, subnetMask);
     console.log(ipAddressValue)
     console.log(cidrValue)
     console.log(hostsValue)
@@ -553,7 +554,8 @@ function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
 
     return {
         subnetMask,
-        wildcardMask
+        wildcardMask,
+        networkAddress
     }
 }
 
@@ -564,8 +566,8 @@ function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
  * AND operation between the IP address and the subnet mask. The result is the address of the network
  * to which the IP belongs.
  *
- * @param {string} ipAddress - The IP address in dotted decimal format (e.g., "192.168.1.1").
- * @param {string} subnetMask - The subnet mask in dotted decimal format (e.g., "255.255.255.0").
+ * @param {string} ipAddress - The IP address in dotted decimal format.
+ * @param {string} subnetMask - The subnet mask in dotted decimal format.
  * @returns {string} - The network address in dotted decimal format.
  *
  */
