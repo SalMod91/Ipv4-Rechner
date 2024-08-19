@@ -540,3 +540,81 @@ describe('validateHosts', function () {
     chai.expect(validateHosts(8, 0)).to.equal(false);
   });
 });
+
+describe('validateSubnets', function () {
+
+  // Valid Subnets Tests
+  it('Valid subnets with /32 CIDR should return true (1 subnet allowed)', function () {
+    chai.expect(validateSubnets(32, 1)).to.equal(true);
+  });
+
+  it('Valid subnets with /31 CIDR should return true (2 subnets allowed)', function () {
+    chai.expect(validateSubnets(31, 2)).to.equal(true);
+  });
+
+  it('Valid subnets with /30 CIDR should return true', function () {
+    chai.expect(validateSubnets(30, 4)).to.equal(true);
+  });
+
+  it('Valid subnets with /29 CIDR should return true', function () {
+    chai.expect(validateSubnets(29, 8)).to.equal(true);
+  });
+
+  it('Valid subnets with /24 CIDR should return true', function () {
+    chai.expect(validateSubnets(24, 256)).to.equal(true);
+  });
+
+  it('Valid subnets with /16 CIDR should return true', function () {
+    chai.expect(validateSubnets(16, 65536)).to.equal(true);
+  });
+
+  it('Valid subnets with /8 CIDR should return true', function () {
+    chai.expect(validateSubnets(8, 16777216)).to.equal(true);
+  });
+
+  // Invalid Subnets Tests
+  it('Invalid subnets with /30 CIDR should return false (exceeds max subnets allowed)', function () {
+    chai.expect(validateSubnets(30, 5)).to.equal(false);
+  });
+
+  it('Invalid subnets with /29 CIDR should return false (exceeds max subnets allowed)', function () {
+    chai.expect(validateSubnets(29, 9)).to.equal(false);
+  });
+
+  it('Invalid subnets with /24 CIDR should return false (exceeds max subnets allowed)', function () {
+    chai.expect(validateSubnets(24, 300)).to.equal(false);
+  });
+
+  it('Invalid subnets with /16 CIDR should return false (exceeds max subnets allowed)', function () {
+    chai.expect(validateSubnets(16, 70000)).to.equal(false);
+  });
+
+  it('Invalid subnets with /8 CIDR should return false (exceeds max subnets allowed)', function () {
+    chai.expect(validateSubnets(8, 20000000)).to.equal(false);
+  });
+
+  it('Invalid subnets with /30 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
+    chai.expect(validateSubnets(30, 0)).to.equal(false);
+  });
+
+  it('Invalid subnets with /29 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
+    chai.expect(validateSubnets(29, 0)).to.equal(false);
+  });
+
+  it('Invalid subnets with /24 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
+    chai.expect(validateSubnets(24, 0)).to.equal(false);
+  });
+
+  it('Invalid subnets with /16 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
+    chai.expect(validateSubnets(16, 0)).to.equal(false);
+  });
+
+  it('Invalid subnets with /8 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
+    chai.expect(validateSubnets(8, 0)).to.equal(false);
+  });
+
+  // Optional Subnets (empty input)
+  it('Optional subnets input should return true', function () {
+    chai.expect(validateSubnets(24, '')).to.equal(true);
+  });
+});

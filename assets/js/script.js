@@ -326,6 +326,35 @@ function validateHosts(cidrValue, hostsValue) {
 }
 
 /**
+ * Validates the number of subnets based on the provided CIDR value.
+ *
+ * This function checks whether the number of subnets specified by the user falls within the valid range for the given CIDR value.
+ * The valid range is determined by calculating the maximum number of subnets allowed by the CIDR value.
+ * 
+ * Ensures that the number of subnets is at least 1 if provided.
+ *
+ * @param {integer} cidrValue - The CIDR notation value that defines the subnet mask.
+ * @param {integer} subnetsValue - The number of subnets specified by the user.
+ * @returns {boolean} - Returns true if the subnetsValue is valid, otherwise returns false.
+ */
+function validateSubnets(cidrValue, subnetsValue) {
+    const maxSubnets = calculateMaxSubnets(cidrValue);
+
+    // Allows empty input since subnets are optional.
+    if (subnetsValue === '' || subnetsValue === null) {
+        return true;
+    }
+
+    const subnetsNumber = parseInt(subnetsValue);
+
+    if (isNaN(subnetsNumber) || subnetsNumber < 1 || subnetsNumber > maxSubnets) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
  * Initializes Bootstrap tooltips for elements with the `data-bs-toggle="tooltip"` attribute.
  * 
  * This function selects all elements in the DOM that have the `data-bs-toggle="tooltip"` attribute
