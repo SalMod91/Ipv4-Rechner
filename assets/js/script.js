@@ -556,3 +556,23 @@ function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
         wildcardMask
     }
 }
+
+/**
+ * Calculates the network address for a given IP address and subnet mask.
+ *
+ * The network address is the first address in a subnet and is calculated by performing a bitwise
+ * AND operation between the IP address and the subnet mask. The result is the address of the network
+ * to which the IP belongs.
+ *
+ * @param {string} ipAddress - The IP address in dotted decimal format (e.g., "192.168.1.1").
+ * @param {string} subnetMask - The subnet mask in dotted decimal format (e.g., "255.255.255.0").
+ * @returns {string} - The network address in dotted decimal format.
+ *
+ */
+function calculateNetworkAddress(ipAddress, subnetMask) {
+    const ipOctets = ipAddress.split('.').map(Number);
+    const maskOctets = subnetMask.split('.').map(Number);
+    
+    const networkOctets = ipOctets.map((octet, index) => octet & maskOctets[index]);
+    return networkOctets.join('.');
+}

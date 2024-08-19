@@ -623,3 +623,31 @@ describe('validateSubnets', function () {
     chai.expect(validateSubnets(8, 0)).to.equal(false);
   });
 });
+
+describe('calculateNetworkAddress', function () {
+  
+  // Valid Network Address Tests
+  it('Valid network address for 192.168.1.10 with /24 should return 192.168.1.0', function () {
+    chai.expect(calculateNetworkAddress('192.168.1.10', '255.255.255.0')).to.equal('192.168.1.0');
+  });
+
+  it('Valid network address for 192.168.1.10 with /16 should return 192.168.0.0', function () {
+    chai.expect(calculateNetworkAddress('192.168.1.10', '255.255.0.0')).to.equal('192.168.0.0');
+  });
+
+  it('Valid network address for 192.168.1.10 with /8 should return 192.0.0.0', function () {
+    chai.expect(calculateNetworkAddress('192.168.1.10', '255.0.0.0')).to.equal('192.0.0.0');
+  });
+
+  it('Valid network address for 10.0.0.1 with /32 should return 10.0.0.1', function () {
+    chai.expect(calculateNetworkAddress('10.0.0.1', '255.255.255.255')).to.equal('10.0.0.1');
+  });
+
+  it('Valid network address for 10.0.0.1 with /31 should return 10.0.0.0', function () {
+    chai.expect(calculateNetworkAddress('10.0.0.1', '255.255.255.254')).to.equal('10.0.0.0');
+  });
+
+  it('Valid network address for 172.16.5.4 with /20 should return 172.16.0.0', function () {
+    chai.expect(calculateNetworkAddress('172.16.5.4', '255.255.240.0')).to.equal('172.16.0.0');
+  });
+});
