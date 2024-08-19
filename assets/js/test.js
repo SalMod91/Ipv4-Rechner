@@ -404,3 +404,65 @@ describe('validateIpAddress', function () {
   });
 
 });
+
+describe('validateCidr', function () {
+  
+  // Valid CIDR Tests
+  it('/32 should return true', function () {
+    chai.expect(validateCidr("/32")).to.equal(true);
+  });
+
+  it('/0 should return true', function () {
+    chai.expect(validateCidr("/0")).to.equal(true);
+  });
+
+  it('/24 should return true', function () {
+    chai.expect(validateCidr("/24")).to.equal(true);
+  });
+
+  it('/1 should return true', function () {
+    chai.expect(validateCidr("/1")).to.equal(true);
+  });
+
+  it('/16 should return true', function () {
+    chai.expect(validateCidr("/16")).to.equal(true);
+  });
+
+  // Invalid CIDR Tests
+  it('/33 should return false', function () {
+    chai.expect(validateCidr("/33")).to.equal(false);
+  });
+
+  it('/-1 should return false', function () {
+    chai.expect(validateCidr("/-1")).to.equal(false);
+  });
+
+  it('/ should return false', function () {
+    chai.expect(validateCidr("/")).to.equal(false);
+  });
+
+  it('32 should return false', function () {
+    chai.expect(validateCidr("32")).to.equal(false);
+  });
+
+  it('/abc should return false', function () {
+    chai.expect(validateCidr("/abc")).to.equal(false);
+  });
+
+  it('/3a should return false', function () {
+    chai.expect(validateCidr("/3a")).to.equal(false);
+  });
+
+  it('Empty string should return false', function () {
+    chai.expect(validateCidr("")).to.equal(false);
+  });
+
+  it('Null should return false', function () {
+    chai.expect(validateCidr(null)).to.equal(false);
+  });
+
+  it('Undefined should return false', function () {
+    chai.expect(validateCidr(undefined)).to.equal(false);
+  });
+
+});

@@ -257,6 +257,21 @@ function validateIpAddress(ipAddress) {
 }
 
 /**
+ * Validates whether a given CIDR notation is valid.
+ *
+ * The function checks if the CIDR notation is in the format "/n", where n is a number
+ * between 0 and 32.
+ *
+ * @param {string} cidr - The CIDR notation to be validated.
+ * @returns {boolean} - Returns true if the CIDR notation is valid, otherwise false.
+ */
+function validateCidr(cidr) {
+    const cidrPattern = /^\/(3[0-2]|[1-2]?[0-9])$/;
+
+    return cidrPattern.test(cidr);
+}
+
+/**
  * Initializes Bootstrap tooltips for elements with the `data-bs-toggle="tooltip"` attribute.
  * 
  * This function selects all elements in the DOM that have the `data-bs-toggle="tooltip"` attribute
