@@ -625,8 +625,6 @@ describe('calculateMaxSubnets', function () {
 });
 
 describe('calculateNetworkAddress', function () {
-  
-  // Valid Network Address Tests
   it('Valid network address for 192.168.1.10 with /24 should return 192.168.1.0', function () {
     chai.expect(calculateNetworkAddress('192.168.1.10', '255.255.255.0')).to.equal('192.168.1.0');
   });
@@ -653,8 +651,6 @@ describe('calculateNetworkAddress', function () {
 });
 
 describe('calculateBroadcastAddress', function () {
-
-  // Valid Broadcast Address Tests
   it('Valid broadcast address for 192.168.1.0 with /24 should return 192.168.1.255', function () {
     chai.expect(calculateBroadcastAddress('192.168.1.0', '255.255.255.0')).to.equal('192.168.1.255');
   });
@@ -677,6 +673,45 @@ describe('calculateBroadcastAddress', function () {
 
   it('Valid broadcast address for 172.16.0.0 with /20 should return 172.16.15.255', function () {
     chai.expect(calculateBroadcastAddress('172.16.0.0', '255.255.240.0')).to.equal('172.16.15.255');
+  });
+
+});
+
+describe('calculateUsableIpRange', function () {
+  it('Valid usable IP range for network 192.168.1.0 and broadcast 192.168.1.255 should return 192.168.1.1 - 192.168.1.254', function () {
+    const result = calculateUsableIpRange('192.168.1.0', '192.168.1.255');
+    chai.expect(result.firstUsable).to.equal('192.168.1.1');
+    chai.expect(result.lastUsable).to.equal('192.168.1.254');
+  });
+
+  it('Valid usable IP range for network 192.168.0.0 and broadcast 192.168.255.255 should return 192.168.0.1 - 192.168.255.254', function () {
+    const result = calculateUsableIpRange('192.168.0.0', '192.168.255.255');
+    chai.expect(result.firstUsable).to.equal('192.168.0.1');
+    chai.expect(result.lastUsable).to.equal('192.168.255.254');
+  });
+
+  it('Valid usable IP range for network 192.0.0.0 and broadcast 192.255.255.255 should return 192.0.0.1 - 192.255.255.254', function () {
+    const result = calculateUsableIpRange('192.0.0.0', '192.255.255.255');
+    chai.expect(result.firstUsable).to.equal('192.0.0.1');
+    chai.expect(result.lastUsable).to.equal('192.255.255.254');
+  });
+
+  it('Valid usable IP range for network 10.0.0.1 and broadcast 10.0.0.1 (single host /32) should return 10.0.0.1 - 10.0.0.1', function () {
+    const result = calculateUsableIpRange('10.0.0.1', '10.0.0.1');
+    chai.expect(result.firstUsable).to.equal('10.0.0.1');
+    chai.expect(result.lastUsable).to.equal('10.0.0.1');
+  });
+
+  it('Valid usable IP range for network 10.0.0.0 and broadcast 10.0.0.1 (/31) should return 10.0.0.0 - 10.0.0.1', function () {
+    const result = calculateUsableIpRange('10.0.0.0', '10.0.0.1');
+    chai.expect(result.firstUsable).to.equal('10.0.0.1');
+    chai.expect(result.lastUsable).to.equal('10.0.0.0');
+  });
+
+  it('Valid usable IP range for network 172.16.0.0 and broadcast 172.16.15.255 should return 172.16.0.1 - 172.16.15.254', function () {
+    const result = calculateUsableIpRange('172.16.0.0', '172.16.15.255');
+    chai.expect(result.firstUsable).to.equal('172.16.0.1');
+    chai.expect(result.lastUsable).to.equal('172.16.15.254');
   });
 
 });

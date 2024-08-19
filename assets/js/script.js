@@ -548,6 +548,7 @@ function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
     let wildcardMask = calculateWildcardMask(subnetMask);
     let networkAddress = calculateNetworkAddress(ipAddressValue, subnetMask);
     let broadcastAddress = calculateBroadcastAddress(networkAddress, subnetMask);
+    let usableIpRange = calculateUsableIpRange(networkAddress, broadcastAddress);
     console.log(ipAddressValue)
     console.log(cidrValue)
     console.log(hostsValue)
@@ -557,7 +558,8 @@ function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
         subnetMask,
         wildcardMask,
         networkAddress,
-        broadcastAddress
+        broadcastAddress,
+        usableIpRange
     }
 }
 
@@ -599,4 +601,41 @@ function calculateBroadcastAddress(networkAddress, subnetMask) {
 
     const broadcastOctets = networkOctets.map((octet, index) => octet | (~maskOctets[index] & 255));
     return broadcastOctets.join('.');
+}
+
+/**
+ * Calculates the first and last usable IP addresses within a subnet.
+ *
+ * This function determines the usable IP range by calculating the IP addresses
+ * that fall between the network address and the broadcast address. The first
+ * usable IP is one greater than the network address, and the last usable IP
+ * is one less than the broadcast address.
+ *
+ * @param {string} networkAddress - The network address of the subnet in dotted decimal notation.
+ * @param {string} broadcastAddress - The broadcast address of the subnet in dotted decimal notation.
+ * @returns {Object} An object containing the first and last usable IP addresses within the subnet:
+ *   - firstUsable: The first usable IP address as a string.
+ *   - lastUsable: The last usable IP address as a string.
+ */
+function calculateUsableIpRange(networkAddress, broadcastAddress) {
+    const networkOctets = networkAddress.split('.').map(Number);
+    const broadcastOctets = broadcastAddress.split('.').map(Number);
+
+    if (networkAddress === broadcastAddress) {
+        return {
+            firstUsable: networkAddress,
+            lastUsable: broadcastAddress
+        };
+    }
+
+    const firstUsableIp = [...networkOctets];
+    const lastUsableIp = [...broadcastOctets];
+
+    firstUsableIp[3] += 1; // Increment the last octet by 1
+    lastUsableIp[3] -= 1;  // Decrement the last octet by 1
+
+    return {
+        firstUsable: firstUsableIp.join('.'),
+        lastUsable: lastUsableIp.join('.')
+    };
 }
