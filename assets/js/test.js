@@ -266,6 +266,52 @@ describe('calculateWildcardMask', function () {
   });
 });
 
+describe('calculateMaxHosts', function () {
+
+  it('CIDR /30 should return 2 hosts', function () {
+      chai.expect(
+          calculateMaxHosts(30)
+      ).to.equal(2);
+  });
+
+  it('CIDR /24 should return 254 hosts', function () {
+      chai.expect(
+          calculateMaxHosts(24)
+      ).to.equal(254);
+  });
+
+  it('CIDR /29 should return 6 hosts', function () {
+      chai.expect(
+          calculateMaxHosts(29)
+      ).to.equal(6);
+  });
+
+  it('CIDR /32 should return 0 hosts', function () {
+      chai.expect(
+          calculateMaxHosts(32)
+      ).to.equal(0);
+  });
+
+  it('CIDR /31 should return 0 hosts', function () {
+      chai.expect(
+          calculateMaxHosts(31)
+      ).to.equal(0);
+  });
+
+  it('CIDR /16 should return 65534 hosts', function () {
+      chai.expect(
+          calculateMaxHosts(16)
+      ).to.equal(65534);
+  });
+
+  it('CIDR /8 should return 16777214 hosts', function () {
+      chai.expect(
+          calculateMaxHosts(8)
+      ).to.equal(16777214);
+  });
+
+});
+
 describe('calculateMaxSubnets', function () {
 
   it('CIDR /25 should return 128 subnets', function () {
