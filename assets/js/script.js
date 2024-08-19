@@ -139,6 +139,13 @@ function handleHostInputChange() {
     let currentHosts = parseInt(hostsInput.value);
     let cidrValue = parseInt(cidrSelect.value.replace('/', ''));
 
+    // Check if the CIDR value is 31 or 32
+    if (cidrValue === 31 || cidrValue === 32) {
+        hostsInput.max = 0;
+        hostsInput.value = 0;
+
+        return
+    }
     // Check if the host input field is empty
     if (hostsInput.value.trim() === '') {
         // If empty, reset the subnets placeholder and exit the function
@@ -146,6 +153,7 @@ function handleHostInputChange() {
         const maxSubnets = calculateMaxSubnets(cidrValue);
         subnetsInput.max = maxSubnets;
         subnetsInput.placeholder = "Max " + maxSubnets + " subnets";
+
         return;
     }
     
