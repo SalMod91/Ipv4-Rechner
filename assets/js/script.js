@@ -142,10 +142,14 @@ function handleHostInputChange() {
     // Check if the CIDR value is 31 or 32
     if (cidrValue === 31 || cidrValue === 32) {
         hostsInput.max = 0;
-        hostsInput.value = 0;
-
-        return
+        if (hostsInput.value.trim() === '') {
+            hostsInput.value = '';
+        } else {
+            hostsInput.value = 0;
+        }
+        return;
     }
+
     // Check if the host input field is empty
     if (hostsInput.value.trim() === '') {
         // If empty, reset the subnets placeholder and exit the function
@@ -321,6 +325,11 @@ function validateCidr(cidr) {
  */
 function validateHosts(cidrValue, hostsValue) {
     const maxHosts = calculateMaxHosts(cidrValue);
+
+    // Allows empty input since hosts are optional.
+    if (hostsValue === '' || hostsValue === null) {
+        return true;
+    }
 
     if ((cidrValue === 32 || cidrValue === 31) && hostsValue === 0) {
         return true;
