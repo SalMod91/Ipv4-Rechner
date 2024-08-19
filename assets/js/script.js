@@ -228,9 +228,18 @@ function validateAndAdjustInput(inputElement, currentValue, maxValue, cidrValue)
  */
 function validateInputs() {
     // Validates IP Address.
-    const ipAddressValue = ipAddress.value.trim();
+    // .trim() removes any leading or trailing whitespace from the IP address input.
+    let ipAddressValue = ipAddress.value.trim();
     if (!validateIpAddress(ipAddressValue)) {
         showError("Invalid IP address.");
+        return false;
+    }
+
+    // Validates CIDR.
+    // .trim() removes any leading or trailing whitespace from the CIDR selection input.
+    let cidrValue = cidrSelect.value.trim();
+    if (!validateCidr(cidrValue)) {
+        showError("Invalid Cidr.");
         return false;
     }
 
