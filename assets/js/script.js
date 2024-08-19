@@ -65,49 +65,59 @@ function updateInputLimits(cidr) {
     // Removes the slash and parse the CIDR value as an integer.
     const cidrValue = parseInt(cidr.replace('/', ''));
     
-    // Calculates the number of bits available for host addresses.
-    const hostBits = 32 - cidrValue;
-    
-    // Calculates the maximum number of hosts available within the subnet.
-    // If there are no Host bits available, the maximum number of hosts is set to 0.
-    const maxHosts = hostBits > 0 ? Math.pow(2, hostBits) - 2 : 0;
+    // Calculates maximum hosts and subnets.
+    const maxHosts = calculateMaxHosts(cidrValue);
+    const maxSubnets = calculateMaxSubnets(cidrValue);
 
     // Sets the maximum value for the input of hosts.
     hostsInput.max = maxHosts;
-    // Indicates in the placeholder the max value of hosts possible.
     hostsInput.placeholder = "Max " + maxHosts + " hosts";
-    validateAndAdjustInput(hostsInput, parseInt(hostsInput.value), maxHosts);
+    
+    // Validates and adjust the hosts input if necessary,
+    validateAndAdjustInput(hostsInput, parseInt(hostsInput.value), maxHosts, cidrValue);
+
+    // Sets the maximum value for the input of subnets.
+    subnetsInput.max = maxSubnets;
+    subnetsInput.placeholder = "Number of Subnets";
+
+    
+    // Validates and adjusts the subnets input if necessary.
+    validateAndAdjustInput(subnetsInput, parseInt(subnetsInput.value), maxSubnets);
 }
 
 /**
  * Handles input changes on the Host input field by validating and adjusting its value.
  */
 function handleHostInputChange() {
-    const currentValue = parseInt(this.value);
-    const maxValue = parseInt(this.max);
+    let currentHosts = parseInt(hostsInput.value);
+    const cidrValue = parseInt(cidrSelect.value.replace('/', ''));
 
-    validateAndAdjustInput(this, currentValue, maxValue);
+    // Check if the host input field is empty
+    if (hostsInput.value.trim() === '') {
+        // If empty, reset the subnets placeholder and exit the function
+        subnetsInput.placeholder = "Number of subnets";
+        return;
+    }
+    
+    // Calculate max subnets based on the inputted number of hosts
+    const maxSubnets = calculateMaxSubnetsForHosts(cidrValue, currentHosts);
+    subnetsInput.max = maxSubnets;
+    subnetsInput.placeholder = "Max " + maxSubnets + " subnets";
+
+    // Adjust and validate the input
+    validateAndAdjustInput(subnetsInput, parseInt(subnetsInput.value), maxSubnets);
+
+    validateAndAdjustInput(hostsInput, currentHosts, hostsInput.max);
 }
 
 /**
  * Handles input changes on the subnet input field by validating and adjusting its value.
  */
 function handleSubnetInputChange() {
-    const numSubnets = parseInt(subnetsInput.value);
-    const maxHosts = parseInt(hostsInput.value);
+    const currentValue = parseInt(this.value);
+    const maxValue = parseInt(this.max);
 
-    // Calculate the maximum possible subnets based on the number of hosts entered.
-    const cidrValue = parseInt(cidrSelect.value.replace('/', ''));
-    const maxSubnets = calculateMaxSubnets(maxHosts, cidrValue);
-
-    if (numSubnets > maxSubnets) {
-        // Adjust the input value and show a tooltip message
-        subnetsInput.value = maxSubnets;
-        const tooltipMessage = `Too many subnets for the chosen CIDR and host count. Max is ${maxSubnets}.`;
-        showTooltip(subnetsInput, tooltipMessage);
-    } else {
-        hideTooltip(subnetsInput);
-    }
+    validateAndAdjustInput(this, currentValue, maxValue);
 }
 
 /**
@@ -118,30 +128,33 @@ function handleSubnetInputChange() {
  * @param {number} currentValue - The current value of the input field.
  * @param {number} maxValue - The maximum allowed value.
  */
-function validateAndAdjustInput(inputElement, currentValue, maxValue) {
-    if (currentValue > maxValue) {
+function validateAndAdjustInput(inputElement, currentValue, maxValue, cidrValue) {
+    // Checks if the input field is empty. If it is, it does nothing.
+    if (inputElement.value.trim() === '') {
+        return;
+    }
+
+    // Handles special cases first for /31 and /32.
+    if (cidrValue === 32 || cidrValue === 31) {
+        if (currentValue !== 0) {
+            inputElement.value = 0;
+            showTooltip(inputElement, `A CIDR of /${cidrValue} allows 0 hosts.`);
+        }
+    } 
+    // Handles the case where the current value exceeds the maximum allowed value.
+    else if (currentValue > maxValue) {
         inputElement.value = maxValue;
         showTooltip(inputElement, `Value adjusted to the maximum allowed: ${maxValue}`);
-
-    } else {
-        // Hides and dispose of any existing tooltip if the value is within the limit.
+    } 
+    // Handles cases where the current value is less than or equal to 0 for other CIDRs.
+    else if (currentValue <= 0) {
+        inputElement.value = 1;
+        showTooltip(inputElement, `The value cannot be less than 1. It has been automatically set to 1.`);
+    } 
+    // If the value is valid and within the limits, hides any existing tooltips.
+    else {
         hideTooltip(inputElement);
     }
-}
-
-/**
- * Validates whether the specified number of subnets can accommodate at least 2 usable hosts each.
- * 
- * This function checks if the given number of subnets can be created while ensuring that each subnet
- * has at least 2 usable hosts.
- *
- * @param {number} numSubnets - The number of subnets to validate.
- * @param {number} maxHosts - The total number of hosts available for allocation across all subnets.
- * @return {boolean} Returns true if each subnet can accommodate at least 2 hosts; otherwise, false.
- */
-function validateSubnets(numSubnets, maxHosts) {
-    const hostsPerSubnet = Math.floor(maxHosts / numSubnets);
-    return hostsPerSubnet >= 2;
 }
 
 /**
@@ -280,22 +293,53 @@ function calculateWildcardMask(subnetMask) {
 }
 
 /**
- * Calculates the maximum number of subnets that can be created given the number of hosts per subnet.
+ * Calculates the maximum number of hosts that can be accommodated within a subnet based on the cidr Value.
  * 
- * This function takes into account the number of bits required to accommodate the given number of hosts 
- * and calculates how many subnets can be created with the remaining bits based on the selected CIDR value.
- *
- * @param {number} hostsPerSubnet - The number of hosts required per subnet, excluding the network and broadcast addresses.
- * @return {number} The maximum number of subnets that can be created. Returns at least 1 if not more.
+ * @param {number} cidrValue - The CIDR notation as an integer.
+ * @return {number} The maximum number of hosts that can be accommodated within the subnet.
  */
-function calculateMaxSubnets(hostsPerSubnet, cidrValue) {
-    // Calculates the number of host bits required.
+function calculateMaxHosts(cidrValue) {
+    const hostBits = 32 - cidrValue;
+    return hostBits > 0 ? Math.pow(2, hostBits) - 2 : 0;
+}
+
+/**
+ * Calculates the maximum number of subnets that can be created given the CIDR value.
+ * 
+ * @param {number} cidrValue - The CIDR notation as an integer.
+ * @return {number} The maximum number of subnets that can be created.
+ */
+function calculateMaxSubnets(cidrValue) {
+    // Number of bits available for subnetting
+    let subnetBits = 32 - cidrValue;
+    
+    return Math.pow(2, subnetBits);
+}
+
+/**
+ * Calculates the maximum number of subnets that can be created based on a specific number of hosts per subnet.
+ * 
+ * @param {number} cidrValue - The CIDR notation as an integer.
+ * @param {number} hostsPerSubnet - The number of hosts required per subnet.
+ * @return {number} The maximum number of subnets that can be created.
+ */
+function calculateMaxSubnetsForHosts(cidrValue, hostsPerSubnet) {
+    const totalHostBits = 32 - cidrValue;
     const hostBits = Math.ceil(Math.log2(hostsPerSubnet + 2));
+    const subnetBits = totalHostBits - hostBits;
+    return subnetBits > 0 ? Math.pow(2, subnetBits) : 1;
+}
 
-    // Calculates the available bits for subnetting based on the CIDR.
-    const availableBits = 32 - cidrValue;
-
-    // Calculates the maximum number of subnets possible.
-    const subnetBits = availableBits - hostBits;
-    return subnetBits >= 0 ? Math.pow(2, subnetBits) : 1;
+/**
+ * Calculates the maximum number of hosts per subnet given a specific number of subnets within a CIDR block.
+ * 
+ * @param {number} cidrValue - The CIDR notation as an integer.
+ * @param {number} numberOfSubnets - The number of subnets you want to create.
+ * @return {number} The maximum number of hosts per subnet.
+ */
+function calculateMaxHostsPerSubnet(cidrValue, numberOfSubnets) {
+    const totalHostBits = 32 - cidrValue;
+    const subnetBits = Math.ceil(Math.log2(numberOfSubnets));
+    const hostBits = totalHostBits - subnetBits;
+    return hostBits > 0 ? Math.pow(2, hostBits) - 2 : 0;
 }

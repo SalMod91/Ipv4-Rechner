@@ -2,7 +2,7 @@
 
 To run a frontend (HTML, CSS, Javascript only) application in Gitpod, in the terminal, type:
 
-`python3 -m http.server`
+python3 -m http.server
 
 A blue button should appear to click: _Make Public_,
 
