@@ -219,6 +219,13 @@ function validateAndAdjustInput(inputElement, currentValue, maxValue, cidrValue)
     }
 }
 
+/**
+ * Validates all user inputs in a form.
+ * 
+ * This function is designed to validate various user inputs in a form.
+ * 
+ * @returns {boolean} Returns true if all validations pass for the IP address and any additional inputs, otherwise returns false.
+ */
 function validateInputs() {
     // Validates IP Address.
     const ipAddressValue = ipAddress.value.trim();
@@ -233,6 +240,16 @@ function validateInputs() {
     return true;
 }
 
+/**
+ * Validates an IPv4 address.
+ * 
+ * This function checks if the given string is a valid IPv4 address based on the standard IPv4 formatting rules.
+ * The address must consist of four decimal octets, each ranging from 0 to 255, separated by dots.
+ * It does not allow leading zeros.
+ * 
+ * @param {string} ipAddress - The IP address to validate.
+ * @returns {boolean} Returns true if the IP address is valid, otherwise false.
+ */
 function validateIpAddress(ipAddress) {
     let ipPattern = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/;
 
