@@ -268,17 +268,41 @@ describe('calculateWildcardMask', function () {
 
 describe('calculateMaxSubnets', function () {
 
-    it('2 hosts and 25 cidr should return 32', function () {
+  it('CIDR /25 should return 128 subnets', function () {
       chai.expect(
-        calculateMaxSubnets(2, 25)
-      ).to.equal(32);
-    });
+          calculateMaxSubnets(25)
+      ).to.equal(128);
+  });
 
-    it('255 hosts should return 1', function () {
+  it('CIDR /30 should return 4 subnets', function () {
       chai.expect(
-        calculateMaxSubnets(2)
+          calculateMaxSubnets(30)
+      ).to.equal(4);
+  });
+
+  it('CIDR /32 should return 1 subnet', function () {
+      chai.expect(
+          calculateMaxSubnets(32)
       ).to.equal(1);
-    });
+  });
+
+  it('CIDR /24 should return 256 subnets', function () {
+      chai.expect(
+          calculateMaxSubnets(24)
+      ).to.equal(256);
+  });
+
+  it('CIDR /16 should return 65536 subnets', function () {
+      chai.expect(
+          calculateMaxSubnets(16)
+      ).to.equal(65536);
+  });
+
+  it('CIDR /8 should return 16777216 subnets', function () {
+      chai.expect(
+          calculateMaxSubnets(8)
+      ).to.equal(16777216);
+  });
 
 });
 
