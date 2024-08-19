@@ -467,3 +467,68 @@ describe('validateCidr', function () {
   });
 
 });
+
+describe('validateHosts', function () {
+  
+  // Valid Hosts Tests
+  it('Valid hosts with /30 CIDR should return true', function () {
+    chai.expect(validateHosts(30, 2)).to.equal(true);
+  });
+
+  it('Valid hosts with /29 CIDR should return true', function () {
+    chai.expect(validateHosts(29, 6)).to.equal(true);
+  });
+
+  it('Valid hosts with /24 CIDR should return true', function () {
+    chai.expect(validateHosts(24, 254)).to.equal(true);
+  });
+
+  it('Valid hosts with /16 CIDR should return true', function () {
+    chai.expect(validateHosts(16, 65534)).to.equal(true);
+  });
+
+  it('Valid hosts with /8 CIDR should return true', function () {
+    chai.expect(validateHosts(8, 16777214)).to.equal(true);
+  });
+
+  // Invalid Hosts Tests
+  it('Invalid hosts with /30 CIDR should return false (exceeds max hosts allowed)', function () {
+    chai.expect(validateHosts(30, 3)).to.equal(false);
+  });
+
+  it('Invalid hosts with /29 CIDR should return false (exceeds max hosts allowed)', function () {
+    chai.expect(validateHosts(29, 8)).to.equal(false);
+  });
+
+  it('Invalid hosts with /24 CIDR should return false (exceeds max hosts allowed)', function () {
+    chai.expect(validateHosts(24, 300)).to.equal(false);
+  });
+
+  it('Invalid hosts with /16 CIDR should return false (exceeds max hosts allowed)', function () {
+    chai.expect(validateHosts(16, 70000)).to.equal(false);
+  });
+
+  it('Invalid hosts with /8 CIDR should return false (exceeds max hosts allowed)', function () {
+    chai.expect(validateHosts(8, 20000000)).to.equal(false);
+  });
+
+  it('Invalid hosts with /30 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
+    chai.expect(validateHosts(30, 0)).to.equal(false);
+  });
+
+  it('Invalid hosts with /29 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
+    chai.expect(validateHosts(29, 0)).to.equal(false);
+  });
+
+  it('Invalid hosts with /24 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
+    chai.expect(validateHosts(24, 0)).to.equal(false);
+  });
+
+  it('Invalid hosts with /16 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
+    chai.expect(validateHosts(16, 0)).to.equal(false);
+  });
+
+  it('Invalid hosts with /8 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
+    chai.expect(validateHosts(8, 0)).to.equal(false);
+  });
+});
