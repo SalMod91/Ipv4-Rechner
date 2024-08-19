@@ -17,32 +17,14 @@ const subnetsInput = document.getElementById('numberOfSubnets');
 hostsInput.addEventListener('input', handleHostInputChange);
 subnetsInput.addEventListener('input', handleSubnetInputChange);
 document.getElementById('calculateButton').addEventListener('click', function() {
-
+    if (validateInputs()) {
         console.log("It works");
-
+    }
 });
-
-
 cidrSelect.addEventListener('change', function () {cidrChange(this.value);});
 
 
-/**
- * Handles changes to the CIDR selection and updates subnet and wildcard masks accordingly.
- * 
- * This function computes both the subnet and wildcard masks based on the selected CIDR value.
- * It then updates the DOM to reflect these changes.
- * 
- * @param {string} cidrValue - The CIDR notation value selected by the user.
- */
-function cidrChange(cidrValue) {
-    let subnetMask = calculateSubnetMask(cidrValue);
-    let wildcardMask = calculateWildcardMask(subnetMask);
-
-    visualizeSubnetMask(subnetMask);
-    visualizeWildcardMask(wildcardMask);
-    updateInputLimits(cidrValue);
-}
-
+// FRONT END ------------------------------------------------------------
 /**
  * Updates the display of the subnet mask input field in the UI.
  * 
@@ -59,6 +41,65 @@ function visualizeSubnetMask(subnetMask) {
  */
 function visualizeWildcardMask(wildcardMask) {
     wildcardMaskInput.value = wildcardMask;
+}
+
+/**
+ * Displays a Bootstrap tooltip with the provided message on the specified input element.
+ * The tooltip will automatically hide after 2 seconds.
+ * 
+ * @param {HTMLElement} inputElement - The input field element where the tooltip should be displayed.
+ * @param {string} message - The message to display inside the tooltip.
+ */
+function showTooltip(inputElement, message) {
+    let tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
+
+    if (!tooltipInstance) {
+        tooltipInstance = new bootstrap.Tooltip(inputElement, { title: message, trigger: 'manual' });
+    } else {
+        tooltipInstance.setContent({ '.tooltip-inner': message });
+    }
+
+    tooltipInstance.show();
+
+    setTimeout(function() {
+        tooltipInstance.hide();
+    }, 2000);
+}
+
+/**
+ * Hides and disposes an existing tooltip on the specified input element.
+ * 
+ * @param {HTMLElement} inputElement - The input field element from which the tooltip should be removed.
+ */
+function hideTooltip(inputElement) {
+    let tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
+    if (tooltipInstance) {
+        tooltipInstance.dispose();
+    }
+}
+
+// Temporary alert message to debug code.
+function showError(message) {
+    alert(message);
+}
+
+// HANDLERS -------------------------------------------------------------
+
+/**
+ * Handles changes to the CIDR selection and updates subnet and wildcard masks accordingly.
+ * 
+ * This function computes both the subnet and wildcard masks based on the selected CIDR value.
+ * It then updates the DOM to reflect these changes.
+ * 
+ * @param {string} cidrValue - The CIDR notation value selected by the user.
+ */
+function cidrChange(cidrValue) {
+    let subnetMask = calculateSubnetMask(cidrValue);
+    let wildcardMask = calculateWildcardMask(subnetMask);
+
+    visualizeSubnetMask(subnetMask);
+    visualizeWildcardMask(wildcardMask);
+    updateInputLimits(cidrValue);
 }
 
 /**
@@ -178,6 +219,26 @@ function validateAndAdjustInput(inputElement, currentValue, maxValue, cidrValue)
     }
 }
 
+function validateInputs() {
+    // Validates IP Address.
+    const ipAddressValue = ipAddress.value.trim();
+    if (!validateIpAddress(ipAddressValue)) {
+        showError("Invalid IP address.");
+        return false;
+    }
+
+    // Additional validations will be added later
+
+    // If all validations pass.
+    return true;
+}
+
+function validateIpAddress(ipAddress) {
+    let ipPattern = /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/;
+
+    return ipPattern.test(ipAddress);
+}
+
 /**
  * Initializes Bootstrap tooltips for elements with the `data-bs-toggle="tooltip"` attribute.
  * 
@@ -207,41 +268,6 @@ function initializeCidrSelection() {
         cidrSelect.dispatchEvent(new Event('change'));
     } else {
         console.log('CIDR select element not found or has no options.');
-    }
-}
-
-/**
- * Displays a Bootstrap tooltip with the provided message on the specified input element.
- * The tooltip will automatically hide after 2 seconds.
- * 
- * @param {HTMLElement} inputElement - The input field element where the tooltip should be displayed.
- * @param {string} message - The message to display inside the tooltip.
- */
-function showTooltip(inputElement, message) {
-    let tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
-
-    if (!tooltipInstance) {
-        tooltipInstance = new bootstrap.Tooltip(inputElement, { title: message, trigger: 'manual' });
-    } else {
-        tooltipInstance.setContent({ '.tooltip-inner': message });
-    }
-
-    tooltipInstance.show();
-
-    setTimeout(function() {
-        tooltipInstance.hide();
-    }, 2000);
-}
-
-/**
- * Hides and disposes an existing tooltip on the specified input element.
- * 
- * @param {HTMLElement} inputElement - The input field element from which the tooltip should be removed.
- */
-function hideTooltip(inputElement) {
-    let tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
-    if (tooltipInstance) {
-        tooltipInstance.dispose();
     }
 }
 
