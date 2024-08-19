@@ -547,6 +547,7 @@ function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
     let subnetMask = calculateSubnetMask(cidrValue)
     let wildcardMask = calculateWildcardMask(subnetMask);
     let networkAddress = calculateNetworkAddress(ipAddressValue, subnetMask);
+    let broadcastAddress = calculateBroadcastAddress(networkAddress, subnetMask);
     console.log(ipAddressValue)
     console.log(cidrValue)
     console.log(hostsValue)
@@ -555,7 +556,8 @@ function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
     return {
         subnetMask,
         wildcardMask,
-        networkAddress
+        networkAddress,
+        broadcastAddress
     }
 }
 
@@ -577,4 +579,24 @@ function calculateNetworkAddress(ipAddress, subnetMask) {
     
     const networkOctets = ipOctets.map((octet, index) => octet & maskOctets[index]);
     return networkOctets.join('.');
+}
+
+/**
+ * Calculates the broadcast address for a given network address and subnet mask.
+ *
+ * The broadcast address is calculated by performing a bitwise OR operation 
+ * between the network address and the wildcard mask.
+ * The broadcast address is the last address in the subnet, used to send data 
+ * to all possible hosts within the subnet.
+ *
+ * @param {string} networkAddress - The network address in dotted decimal notation.
+ * @param {string} subnetMask - The subnet mask in dotted decimal notation.
+ * @returns {string} - The calculated broadcast address in dotted decimal notation.
+ */
+function calculateBroadcastAddress(networkAddress, subnetMask) {
+    const networkOctets = networkAddress.split('.').map(Number);
+    const maskOctets = subnetMask.split('.').map(Number);
+
+    const broadcastOctets = networkOctets.map((octet, index) => octet | (~maskOctets[index] & 255));
+    return broadcastOctets.join('.');
 }

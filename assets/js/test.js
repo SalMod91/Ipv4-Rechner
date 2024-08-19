@@ -1,3 +1,275 @@
+describe('validateIpAddress', function () {
+
+  // Valid IP Address Tests
+  it('192.168.1.1 should return true', function () {
+    chai.expect(validateIpAddress("192.168.1.1")).to.equal(true);
+  });
+
+  it('255.255.255.255 should return true', function () {
+    chai.expect(validateIpAddress("255.255.255.255")).to.equal(true);
+  });
+
+  it('0.0.0.0 should return true', function () {
+    chai.expect(validateIpAddress("0.0.0.0")).to.equal(true);
+  });
+
+  it('223.255.255.255 should return true', function () {
+    chai.expect(validateIpAddress("223.255.255.255")).to.equal(true);
+  });
+
+  // Invalid IP Address Tests
+  it('256.0.0.1 should return false', function () {
+    chai.expect(validateIpAddress("256.0.0.1")).to.equal(false);
+  });
+
+  it('192.168.1 should return false', function () {
+    chai.expect(validateIpAddress("192.168.1")).to.equal(false);
+  });
+
+  it('192.168.1.1.1 should return false', function () {
+    chai.expect(validateIpAddress("192.168.1.1.1")).to.equal(false);
+  });
+
+  it('192.168.abc.1 should return false', function () {
+    chai.expect(validateIpAddress("192.168.abc.1")).to.equal(false);
+  });
+
+  it('192.168.1.1@ should return false', function () {
+    chai.expect(validateIpAddress("192.168.1.1@")).to.equal(false);
+  });
+
+  it('192.168.001.001 should return false', function () {
+    chai.expect(validateIpAddress("192.168.001.001")).to.equal(false);
+  });
+
+  it('-192.168.1.1 should return false', function () {
+    chai.expect(validateIpAddress("-192.168.1.1")).to.equal(false);
+  });
+
+  it('"" should return false', function () {
+    chai.expect(validateIpAddress("")).to.equal(false);
+  });
+
+});
+
+describe('validateCidr', function () {
+  
+  // Valid CIDR Tests
+  it('/32 should return true', function () {
+    chai.expect(validateCidr("/32")).to.equal(true);
+  });
+
+  it('/0 should return true', function () {
+    chai.expect(validateCidr("/0")).to.equal(true);
+  });
+
+  it('/24 should return true', function () {
+    chai.expect(validateCidr("/24")).to.equal(true);
+  });
+
+  it('/1 should return true', function () {
+    chai.expect(validateCidr("/1")).to.equal(true);
+  });
+
+  it('/16 should return true', function () {
+    chai.expect(validateCidr("/16")).to.equal(true);
+  });
+
+  // Invalid CIDR Tests
+  it('/33 should return false', function () {
+    chai.expect(validateCidr("/33")).to.equal(false);
+  });
+
+  it('/-1 should return false', function () {
+    chai.expect(validateCidr("/-1")).to.equal(false);
+  });
+
+  it('/ should return false', function () {
+    chai.expect(validateCidr("/")).to.equal(false);
+  });
+
+  it('32 should return false', function () {
+    chai.expect(validateCidr("32")).to.equal(false);
+  });
+
+  it('/abc should return false', function () {
+    chai.expect(validateCidr("/abc")).to.equal(false);
+  });
+
+  it('/3a should return false', function () {
+    chai.expect(validateCidr("/3a")).to.equal(false);
+  });
+
+  it('Empty string should return false', function () {
+    chai.expect(validateCidr("")).to.equal(false);
+  });
+
+  it('Null should return false', function () {
+    chai.expect(validateCidr(null)).to.equal(false);
+  });
+
+  it('Undefined should return false', function () {
+    chai.expect(validateCidr(undefined)).to.equal(false);
+  });
+
+});
+
+describe('validateHosts', function () {
+  
+  // Valid Hosts Tests
+  it('Valid hosts with /32 CIDR should return true (0 hosts allowed)', function () {
+    chai.expect(validateHosts(32, 0)).to.equal(true);
+  });
+
+  it('Valid hosts with /31 CIDR should return true (0 hosts allowed)', function () {
+    chai.expect(validateHosts(31, 0)).to.equal(true);
+  });
+
+  it('Valid hosts with /30 CIDR should return true', function () {
+    chai.expect(validateHosts(30, 2)).to.equal(true);
+  });
+
+  it('Valid hosts with /29 CIDR should return true', function () {
+    chai.expect(validateHosts(29, 6)).to.equal(true);
+  });
+
+  it('Valid hosts with /24 CIDR should return true', function () {
+    chai.expect(validateHosts(24, 254)).to.equal(true);
+  });
+
+  it('Valid hosts with /16 CIDR should return true', function () {
+    chai.expect(validateHosts(16, 65534)).to.equal(true);
+  });
+
+  it('Valid hosts with /8 CIDR should return true', function () {
+    chai.expect(validateHosts(8, 16777214)).to.equal(true);
+  });
+
+  // Optional Hosts (empty input)
+  it('Optional hosts input should return true', function () {
+    chai.expect(validateHosts(24, '')).to.equal(true);
+  });
+
+  // Invalid Hosts Tests
+  it('Invalid hosts with /30 CIDR should return false (exceeds max hosts allowed)', function () {
+    chai.expect(validateHosts(30, 3)).to.equal(false);
+  });
+
+  it('Invalid hosts with /29 CIDR should return false (exceeds max hosts allowed)', function () {
+    chai.expect(validateHosts(29, 8)).to.equal(false);
+  });
+
+  it('Invalid hosts with /24 CIDR should return false (exceeds max hosts allowed)', function () {
+    chai.expect(validateHosts(24, 300)).to.equal(false);
+  });
+
+  it('Invalid hosts with /16 CIDR should return false (exceeds max hosts allowed)', function () {
+    chai.expect(validateHosts(16, 70000)).to.equal(false);
+  });
+
+  it('Invalid hosts with /8 CIDR should return false (exceeds max hosts allowed)', function () {
+    chai.expect(validateHosts(8, 20000000)).to.equal(false);
+  });
+
+  it('Invalid hosts with /30 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
+    chai.expect(validateHosts(30, 0)).to.equal(false);
+  });
+
+  it('Invalid hosts with /29 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
+    chai.expect(validateHosts(29, 0)).to.equal(false);
+  });
+
+  it('Invalid hosts with /24 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
+    chai.expect(validateHosts(24, 0)).to.equal(false);
+  });
+
+  it('Invalid hosts with /16 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
+    chai.expect(validateHosts(16, 0)).to.equal(false);
+  });
+
+  it('Invalid hosts with /8 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
+    chai.expect(validateHosts(8, 0)).to.equal(false);
+  });
+});
+
+describe('validateSubnets', function () {
+
+  // Valid Subnets Tests
+  it('Valid subnets with /32 CIDR should return true (1 subnet allowed)', function () {
+    chai.expect(validateSubnets(32, 1)).to.equal(true);
+  });
+
+  it('Valid subnets with /31 CIDR should return true (2 subnets allowed)', function () {
+    chai.expect(validateSubnets(31, 2)).to.equal(true);
+  });
+
+  it('Valid subnets with /30 CIDR should return true', function () {
+    chai.expect(validateSubnets(30, 4)).to.equal(true);
+  });
+
+  it('Valid subnets with /29 CIDR should return true', function () {
+    chai.expect(validateSubnets(29, 8)).to.equal(true);
+  });
+
+  it('Valid subnets with /24 CIDR should return true', function () {
+    chai.expect(validateSubnets(24, 256)).to.equal(true);
+  });
+
+  it('Valid subnets with /16 CIDR should return true', function () {
+    chai.expect(validateSubnets(16, 65536)).to.equal(true);
+  });
+
+  it('Valid subnets with /8 CIDR should return true', function () {
+    chai.expect(validateSubnets(8, 16777216)).to.equal(true);
+  });
+
+  // Optional Subnets (empty input)
+  it('Optional subnets input should return true', function () {
+    chai.expect(validateSubnets(24, '')).to.equal(true);
+  });
+
+  // Invalid Subnets Tests
+  it('Invalid subnets with /30 CIDR should return false (exceeds max subnets allowed)', function () {
+    chai.expect(validateSubnets(30, 5)).to.equal(false);
+  });
+
+  it('Invalid subnets with /29 CIDR should return false (exceeds max subnets allowed)', function () {
+    chai.expect(validateSubnets(29, 9)).to.equal(false);
+  });
+
+  it('Invalid subnets with /24 CIDR should return false (exceeds max subnets allowed)', function () {
+    chai.expect(validateSubnets(24, 300)).to.equal(false);
+  });
+
+  it('Invalid subnets with /16 CIDR should return false (exceeds max subnets allowed)', function () {
+    chai.expect(validateSubnets(16, 70000)).to.equal(false);
+  });
+
+  it('Invalid subnets with /8 CIDR should return false (exceeds max subnets allowed)', function () {
+    chai.expect(validateSubnets(8, 20000000)).to.equal(false);
+  });
+
+  it('Invalid subnets with /30 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
+    chai.expect(validateSubnets(30, 0)).to.equal(false);
+  });
+
+  it('Invalid subnets with /29 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
+    chai.expect(validateSubnets(29, 0)).to.equal(false);
+  });
+
+  it('Invalid subnets with /24 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
+    chai.expect(validateSubnets(24, 0)).to.equal(false);
+  });
+
+  it('Invalid subnets with /16 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
+    chai.expect(validateSubnets(16, 0)).to.equal(false);
+  });
+
+  it('Invalid subnets with /8 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
+    chai.expect(validateSubnets(8, 0)).to.equal(false);
+  });
+});
+
 describe('calculateSubnetMask', function () {
   it('should return "0.0.0.0" for /0', function () {
     chai.expect(calculateSubnetMask("/0")).to.equal("0.0.0.0");
@@ -352,278 +624,6 @@ describe('calculateMaxSubnets', function () {
 
 });
 
-describe('validateIpAddress', function () {
-
-  // Valid IP Address Tests
-  it('192.168.1.1 should return true', function () {
-    chai.expect(validateIpAddress("192.168.1.1")).to.equal(true);
-  });
-
-  it('255.255.255.255 should return true', function () {
-    chai.expect(validateIpAddress("255.255.255.255")).to.equal(true);
-  });
-
-  it('0.0.0.0 should return true', function () {
-    chai.expect(validateIpAddress("0.0.0.0")).to.equal(true);
-  });
-
-  it('223.255.255.255 should return true', function () {
-    chai.expect(validateIpAddress("223.255.255.255")).to.equal(true);
-  });
-
-  // Invalid IP Address Tests
-  it('256.0.0.1 should return false', function () {
-    chai.expect(validateIpAddress("256.0.0.1")).to.equal(false);
-  });
-
-  it('192.168.1 should return false', function () {
-    chai.expect(validateIpAddress("192.168.1")).to.equal(false);
-  });
-
-  it('192.168.1.1.1 should return false', function () {
-    chai.expect(validateIpAddress("192.168.1.1.1")).to.equal(false);
-  });
-
-  it('192.168.abc.1 should return false', function () {
-    chai.expect(validateIpAddress("192.168.abc.1")).to.equal(false);
-  });
-
-  it('192.168.1.1@ should return false', function () {
-    chai.expect(validateIpAddress("192.168.1.1@")).to.equal(false);
-  });
-
-  it('192.168.001.001 should return false', function () {
-    chai.expect(validateIpAddress("192.168.001.001")).to.equal(false);
-  });
-
-  it('-192.168.1.1 should return false', function () {
-    chai.expect(validateIpAddress("-192.168.1.1")).to.equal(false);
-  });
-
-  it('"" should return false', function () {
-    chai.expect(validateIpAddress("")).to.equal(false);
-  });
-
-});
-
-describe('validateCidr', function () {
-  
-  // Valid CIDR Tests
-  it('/32 should return true', function () {
-    chai.expect(validateCidr("/32")).to.equal(true);
-  });
-
-  it('/0 should return true', function () {
-    chai.expect(validateCidr("/0")).to.equal(true);
-  });
-
-  it('/24 should return true', function () {
-    chai.expect(validateCidr("/24")).to.equal(true);
-  });
-
-  it('/1 should return true', function () {
-    chai.expect(validateCidr("/1")).to.equal(true);
-  });
-
-  it('/16 should return true', function () {
-    chai.expect(validateCidr("/16")).to.equal(true);
-  });
-
-  // Invalid CIDR Tests
-  it('/33 should return false', function () {
-    chai.expect(validateCidr("/33")).to.equal(false);
-  });
-
-  it('/-1 should return false', function () {
-    chai.expect(validateCidr("/-1")).to.equal(false);
-  });
-
-  it('/ should return false', function () {
-    chai.expect(validateCidr("/")).to.equal(false);
-  });
-
-  it('32 should return false', function () {
-    chai.expect(validateCidr("32")).to.equal(false);
-  });
-
-  it('/abc should return false', function () {
-    chai.expect(validateCidr("/abc")).to.equal(false);
-  });
-
-  it('/3a should return false', function () {
-    chai.expect(validateCidr("/3a")).to.equal(false);
-  });
-
-  it('Empty string should return false', function () {
-    chai.expect(validateCidr("")).to.equal(false);
-  });
-
-  it('Null should return false', function () {
-    chai.expect(validateCidr(null)).to.equal(false);
-  });
-
-  it('Undefined should return false', function () {
-    chai.expect(validateCidr(undefined)).to.equal(false);
-  });
-
-});
-
-describe('validateHosts', function () {
-  
-  // Valid Hosts Tests
-  it('Valid hosts with /32 CIDR should return true (0 hosts allowed)', function () {
-    chai.expect(validateHosts(32, 0)).to.equal(true);
-  });
-
-  it('Valid hosts with /31 CIDR should return true (0 hosts allowed)', function () {
-    chai.expect(validateHosts(31, 0)).to.equal(true);
-  });
-
-  it('Valid hosts with /30 CIDR should return true', function () {
-    chai.expect(validateHosts(30, 2)).to.equal(true);
-  });
-
-  it('Valid hosts with /29 CIDR should return true', function () {
-    chai.expect(validateHosts(29, 6)).to.equal(true);
-  });
-
-  it('Valid hosts with /24 CIDR should return true', function () {
-    chai.expect(validateHosts(24, 254)).to.equal(true);
-  });
-
-  it('Valid hosts with /16 CIDR should return true', function () {
-    chai.expect(validateHosts(16, 65534)).to.equal(true);
-  });
-
-  it('Valid hosts with /8 CIDR should return true', function () {
-    chai.expect(validateHosts(8, 16777214)).to.equal(true);
-  });
-
-  // Optional Hosts (empty input)
-  it('Optional hosts input should return true', function () {
-    chai.expect(validateHosts(24, '')).to.equal(true);
-  });
-
-  // Invalid Hosts Tests
-  it('Invalid hosts with /30 CIDR should return false (exceeds max hosts allowed)', function () {
-    chai.expect(validateHosts(30, 3)).to.equal(false);
-  });
-
-  it('Invalid hosts with /29 CIDR should return false (exceeds max hosts allowed)', function () {
-    chai.expect(validateHosts(29, 8)).to.equal(false);
-  });
-
-  it('Invalid hosts with /24 CIDR should return false (exceeds max hosts allowed)', function () {
-    chai.expect(validateHosts(24, 300)).to.equal(false);
-  });
-
-  it('Invalid hosts with /16 CIDR should return false (exceeds max hosts allowed)', function () {
-    chai.expect(validateHosts(16, 70000)).to.equal(false);
-  });
-
-  it('Invalid hosts with /8 CIDR should return false (exceeds max hosts allowed)', function () {
-    chai.expect(validateHosts(8, 20000000)).to.equal(false);
-  });
-
-  it('Invalid hosts with /30 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
-    chai.expect(validateHosts(30, 0)).to.equal(false);
-  });
-
-  it('Invalid hosts with /29 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
-    chai.expect(validateHosts(29, 0)).to.equal(false);
-  });
-
-  it('Invalid hosts with /24 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
-    chai.expect(validateHosts(24, 0)).to.equal(false);
-  });
-
-  it('Invalid hosts with /16 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
-    chai.expect(validateHosts(16, 0)).to.equal(false);
-  });
-
-  it('Invalid hosts with /8 CIDR should return false (0 is not allowed, minimum 1 host)', function () {
-    chai.expect(validateHosts(8, 0)).to.equal(false);
-  });
-});
-
-describe('validateSubnets', function () {
-
-  // Valid Subnets Tests
-  it('Valid subnets with /32 CIDR should return true (1 subnet allowed)', function () {
-    chai.expect(validateSubnets(32, 1)).to.equal(true);
-  });
-
-  it('Valid subnets with /31 CIDR should return true (2 subnets allowed)', function () {
-    chai.expect(validateSubnets(31, 2)).to.equal(true);
-  });
-
-  it('Valid subnets with /30 CIDR should return true', function () {
-    chai.expect(validateSubnets(30, 4)).to.equal(true);
-  });
-
-  it('Valid subnets with /29 CIDR should return true', function () {
-    chai.expect(validateSubnets(29, 8)).to.equal(true);
-  });
-
-  it('Valid subnets with /24 CIDR should return true', function () {
-    chai.expect(validateSubnets(24, 256)).to.equal(true);
-  });
-
-  it('Valid subnets with /16 CIDR should return true', function () {
-    chai.expect(validateSubnets(16, 65536)).to.equal(true);
-  });
-
-  it('Valid subnets with /8 CIDR should return true', function () {
-    chai.expect(validateSubnets(8, 16777216)).to.equal(true);
-  });
-
-  // Optional Subnets (empty input)
-  it('Optional subnets input should return true', function () {
-    chai.expect(validateSubnets(24, '')).to.equal(true);
-  });
-
-  // Invalid Subnets Tests
-  it('Invalid subnets with /30 CIDR should return false (exceeds max subnets allowed)', function () {
-    chai.expect(validateSubnets(30, 5)).to.equal(false);
-  });
-
-  it('Invalid subnets with /29 CIDR should return false (exceeds max subnets allowed)', function () {
-    chai.expect(validateSubnets(29, 9)).to.equal(false);
-  });
-
-  it('Invalid subnets with /24 CIDR should return false (exceeds max subnets allowed)', function () {
-    chai.expect(validateSubnets(24, 300)).to.equal(false);
-  });
-
-  it('Invalid subnets with /16 CIDR should return false (exceeds max subnets allowed)', function () {
-    chai.expect(validateSubnets(16, 70000)).to.equal(false);
-  });
-
-  it('Invalid subnets with /8 CIDR should return false (exceeds max subnets allowed)', function () {
-    chai.expect(validateSubnets(8, 20000000)).to.equal(false);
-  });
-
-  it('Invalid subnets with /30 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
-    chai.expect(validateSubnets(30, 0)).to.equal(false);
-  });
-
-  it('Invalid subnets with /29 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
-    chai.expect(validateSubnets(29, 0)).to.equal(false);
-  });
-
-  it('Invalid subnets with /24 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
-    chai.expect(validateSubnets(24, 0)).to.equal(false);
-  });
-
-  it('Invalid subnets with /16 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
-    chai.expect(validateSubnets(16, 0)).to.equal(false);
-  });
-
-  it('Invalid subnets with /8 CIDR should return false (0 is not allowed, minimum 1 subnet)', function () {
-    chai.expect(validateSubnets(8, 0)).to.equal(false);
-  });
-});
-
 describe('calculateNetworkAddress', function () {
   
   // Valid Network Address Tests
@@ -650,4 +650,33 @@ describe('calculateNetworkAddress', function () {
   it('Valid network address for 172.16.5.4 with /20 should return 172.16.0.0', function () {
     chai.expect(calculateNetworkAddress('172.16.5.4', '255.255.240.0')).to.equal('172.16.0.0');
   });
+});
+
+describe('calculateBroadcastAddress', function () {
+
+  // Valid Broadcast Address Tests
+  it('Valid broadcast address for 192.168.1.0 with /24 should return 192.168.1.255', function () {
+    chai.expect(calculateBroadcastAddress('192.168.1.0', '255.255.255.0')).to.equal('192.168.1.255');
+  });
+
+  it('Valid broadcast address for 192.168.0.0 with /16 should return 192.168.255.255', function () {
+    chai.expect(calculateBroadcastAddress('192.168.0.0', '255.255.0.0')).to.equal('192.168.255.255');
+  });
+
+  it('Valid broadcast address for 192.0.0.0 with /8 should return 192.255.255.255', function () {
+    chai.expect(calculateBroadcastAddress('192.0.0.0', '255.0.0.0')).to.equal('192.255.255.255');
+  });
+
+  it('Valid broadcast address for 10.0.0.1 with /32 should return 10.0.0.1', function () {
+    chai.expect(calculateBroadcastAddress('10.0.0.1', '255.255.255.255')).to.equal('10.0.0.1');
+  });
+
+  it('Valid broadcast address for 10.0.0.0 with /31 should return 10.0.0.1', function () {
+    chai.expect(calculateBroadcastAddress('10.0.0.0', '255.255.255.254')).to.equal('10.0.0.1');
+  });
+
+  it('Valid broadcast address for 172.16.0.0 with /20 should return 172.16.15.255', function () {
+    chai.expect(calculateBroadcastAddress('172.16.0.0', '255.255.240.0')).to.equal('172.16.15.255');
+  });
+
 });
