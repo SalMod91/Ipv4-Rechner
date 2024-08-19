@@ -78,7 +78,7 @@ function updateInputLimits(cidr) {
 
     // Sets the maximum value for the input of subnets.
     subnetsInput.max = maxSubnets;
-    subnetsInput.placeholder = "Number of Subnets";
+    subnetsInput.placeholder = "Max " + maxSubnets + " subnets";
 
     
     // Validates and adjusts the subnets input if necessary.
@@ -95,7 +95,10 @@ function handleHostInputChange() {
     // Check if the host input field is empty
     if (hostsInput.value.trim() === '') {
         // If empty, reset the subnets placeholder and exit the function
-        subnetsInput.placeholder = "Number of subnets";
+        // Calculate max subnets based solely on the CIDR value
+        const maxSubnets = calculateMaxSubnets(cidrValue);
+        subnetsInput.max = maxSubnets;
+        subnetsInput.placeholder = "Max " + maxSubnets + " subnets";
         return;
     }
     
