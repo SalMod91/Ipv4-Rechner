@@ -25,7 +25,7 @@ input::placeholder {
     text-align: center;
 }
 
-#subnetMask, #wildcardMask {
+#subnetMask, #wildcardMask, #maxHosts {
     background-color: #e9ecef;
     color: grey;
     pointer-events: none;

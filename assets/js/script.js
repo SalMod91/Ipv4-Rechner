@@ -9,13 +9,12 @@ const ipAddress = document.getElementById('ipAddress')
 const cidrSelect = document.getElementById('cidrSelect');
 const subnetMaskInput = document.getElementById('subnetMask');
 const wildcardMaskInput = document.getElementById('wildcardMask');
-const hostsInput = document.getElementById('requiredHosts');
+const hostsInput = document.getElementById('maxHosts');
 const subnetsInput = document.getElementById('numberOfSubnets');
 
 
 // Event Listeners
 cidrSelect.addEventListener('change', function () {cidrChange(this.value);});
-hostsInput.addEventListener('input', handleHostInputChange);
 subnetsInput.addEventListener('input', handleSubnetInputChange);
 document.getElementById('calculateButton').addEventListener('click', function() {
     if (validateInputs()) {
@@ -49,6 +48,10 @@ function visualizeSubnetMask(subnetMask) {
  */
 function visualizeWildcardMask(wildcardMask) {
     wildcardMaskInput.value = wildcardMask;
+}
+
+function visualizemaxHosts(maxHosts) {
+    hostsInput.value = maxHosts;
 }
 
 /**
@@ -132,9 +135,11 @@ function cidrChange(cidrValue) {
     cidrValue = parseInt(cidrValue.replace('/', ''));
     let subnetMask = calculateSubnetMask(cidrValue);
     let wildcardMask = calculateWildcardMask(subnetMask);
+    let maxHosts = calculateMaxHosts(cidrValue)
 
     visualizeSubnetMask(subnetMask);
     visualizeWildcardMask(wildcardMask);
+    visualizemaxHosts(maxHosts)
     updateInputLimits(cidrValue);
 }
 
@@ -145,65 +150,20 @@ function cidrChange(cidrValue) {
  * @param {string} - The CIDR notation chosen by the User which gets parsed into an Integer.
  */
 function updateInputLimits(cidrValue) {
-    
-    // Calculates maximum hosts and subnets.
-    const maxHosts = calculateMaxHosts(cidrValue);
     const maxSubnets = calculateMaxSubnets(cidrValue);
-
-    // Sets the maximum value for the input of hosts.
-    hostsInput.max = maxHosts;
-    hostsInput.placeholder = "Max " + maxHosts + " hosts";
-    
-    // Validates and adjust the hosts input if necessary,
-    validateAndAdjustInput(hostsInput, parseInt(hostsInput.value), maxHosts, cidrValue);
 
     // Sets the maximum value for the input of subnets.
     subnetsInput.max = maxSubnets;
     subnetsInput.placeholder = "Max " + maxSubnets + " subnets";
 
-    
-    // Validates and adjusts the subnets input if necessary.
-    validateAndAdjustInput(subnetsInput, parseInt(subnetsInput.value), maxSubnets);
+    // Calculate and update the read-only hosts field based on just the CIDR value
+    const maxHosts = calculateMaxHosts(cidrValue);
+    hostsInput.value = maxHosts;
 }
 
-/**
- * Handles input changes on the Host input field by validating and adjusting its value.
- */
-function handleHostInputChange() {
-    let currentHosts = parseInt(hostsInput.value);
-    let cidrValue = parseInt(cidrSelect.value.replace('/', ''));
-
-    // Check if the CIDR value is 31 or 32
-    if (cidrValue === 31 || cidrValue === 32) {
-        hostsInput.max = 0;
-        if (hostsInput.value.trim() === '') {
-            hostsInput.value = '';
-        } else {
-            hostsInput.value = 0;
-        }
-        return;
-    }
-
-    // Check if the host input field is empty
-    if (hostsInput.value.trim() === '') {
-        // If empty, reset the subnets placeholder and exit the function
-        // Calculate max subnets based solely on the CIDR value
-        const maxSubnets = calculateMaxSubnets(cidrValue);
-        subnetsInput.max = maxSubnets;
-        subnetsInput.placeholder = "Max " + maxSubnets + " subnets";
-
-        return;
-    }
-    
-    // Calculate max subnets based on the inputted number of hosts
-    const maxSubnets = calculateMaxSubnetsForHosts(cidrValue, currentHosts);
-    subnetsInput.max = maxSubnets;
-    subnetsInput.placeholder = "Max " + maxSubnets + " subnets";
-
-    // Adjust and validate the input
-    validateAndAdjustInput(subnetsInput, parseInt(subnetsInput.value), maxSubnets);
-
-    validateAndAdjustInput(hostsInput, currentHosts, hostsInput.max);
+function updateHostsValue(cidrValue, currentSubnets) {
+    const maxHosts = calculateMaxHostsPerSubnet(cidrValue, currentSubnets);
+    hostsInput.value = maxHosts;
 }
 
 /**
@@ -213,19 +173,13 @@ function handleSubnetInputChange() {
     let currentSubnets = parseInt(subnetsInput.value);
     let cidrValue = parseInt(cidrSelect.value.replace('/', ''));
 
-    if (subnetsInput.value.trim() === '') {
-        const maxHosts = calculateMaxHosts(cidrValue, currentSubnets);
-        hostsInput.max = maxHosts;
-        hostsInput.placeholder = "Max " + maxHosts + " hosts";
-        return;
+    if (isNaN(currentSubnets) || subnetsInput.value.trim() === '') {
+        let maxHosts = calculateMaxHosts(cidrValue);
+        hostsInput.value = maxHosts;
+    } else {
+        updateHostsValue(cidrValue, currentSubnets);
+        validateAndAdjustSubnetInput(subnetsInput, currentSubnets, subnetsInput.max, cidrValue);
     }
-
-    const maxHosts = calculateMaxHostsPerSubnet(cidrValue, currentSubnets);
-    hostsInput.max = maxHosts;
-    hostsInput.placeholder = "Max " + maxHosts + " hosts";
-
-    validateAndAdjustInput(hostsInput, parseInt(hostsInput.value), maxHosts);
-    validateAndAdjustInput(subnetsInput, currentSubnets, subnetsInput.max);
 }
 
 /**
@@ -236,31 +190,17 @@ function handleSubnetInputChange() {
  * @param {integer} currentValue - The current value of the input field.
  * @param {integer} maxValue - The maximum allowed value.
  */
-function validateAndAdjustInput(inputElement, currentValue, maxValue, cidrValue) {
-    // Checks if the input field is empty. If it is, it does nothing.
+function validateAndAdjustSubnetInput(inputElement, currentValue, maxValue, cidrValue) {
     if (inputElement.value.trim() === '') {
         return;
-    }
-
-    // Handles special cases first for /31 and /32.
-    if (cidrValue === 32 || cidrValue === 31) {
-        if (currentValue !== 0) {
-            inputElement.value = 0;
-            showTooltip(inputElement, `A CIDR of /${cidrValue} allows 0 hosts.`);
-        }
-    } 
-    // Handles the case where the current value exceeds the maximum allowed value.
-    else if (currentValue > maxValue) {
+    } else if (currentValue > maxValue) {
         inputElement.value = maxValue;
         showTooltip(inputElement, `Value adjusted to the maximum allowed: ${maxValue}`);
-    } 
-    // Handles cases where the current value is less than or equal to 0 for other CIDRs.
-    else if (currentValue <= 0) {
+    } else if (currentValue <= 0) {
         inputElement.value = 1;
         showTooltip(inputElement, `The value cannot be less than 1. It has been automatically set to 1.`);
-    } 
-    // If the value is valid and within the limits, hides any existing tooltips.
-    else {
+        updateHostsValue(cidrValue, 1);
+    } else {
         hideTooltip(inputElement);
     }
 }
@@ -527,19 +467,6 @@ function calculateMaxSubnets(cidrValue) {
     return Math.pow(2, subnetBits);
 }
 
-/**
- * Calculates the maximum number of subnets that can be created based on a specific number of hosts per subnet.
- * 
- * @param {integer} cidrValue - The CIDR notation as an integer.
- * @param {integer} hostsPerSubnet - The number of hosts required per subnet.
- * @return {integer} The maximum number of subnets that can be created.
- */
-function calculateMaxSubnetsForHosts(cidrValue, hostsPerSubnet) {
-    const totalHostBits = 32 - cidrValue;
-    const hostBits = Math.ceil(Math.log2(hostsPerSubnet + 2));
-    const subnetBits = totalHostBits - hostBits;
-    return subnetBits > 0 ? Math.pow(2, subnetBits) : 1;
-}
 
 /**
  * Calculates the maximum number of hosts per subnet given a specific number of subnets within a CIDR block.
@@ -549,10 +476,15 @@ function calculateMaxSubnetsForHosts(cidrValue, hostsPerSubnet) {
  * @return {integer} The maximum number of hosts per subnet.
  */
 function calculateMaxHostsPerSubnet(cidrValue, numberOfSubnets) {
-    const totalHostBits = 32 - cidrValue;
-    const subnetBits = Math.ceil(Math.log2(numberOfSubnets));
-    const hostBits = totalHostBits - subnetBits;
-    return hostBits > 0 ? Math.pow(2, hostBits) - 2 : 0;
+
+    const bitsForSubnets = Math.ceil(Math.log2(numberOfSubnets));
+    const newCIDR = cidrValue + bitsForSubnets;
+    const effectiveCIDR = Math.min(newCIDR, 32);
+    if (newCIDR >= 32) {
+        return 0;
+    }
+    const hostBits = 32 - effectiveCIDR;
+    return Math.pow(2, hostBits) - 2;
 }
 
 /**
@@ -578,12 +510,19 @@ function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
     let usableIpRange = calculateUsableIpRange(networkAddress, broadcastAddress);
     let totalHosts = calculateMaxHosts(cidrValue)
     let possibleSubnets = calculateMaxSubnets(cidrValue)
+
+    // Handle dynamic host or subnet calculations
+    let calculatedHosts = hostsValue;
+    let calculatedSubnets = subnetsValue;
+
     console.log(ipAddressValue)
     console.log(cidrValue)
     console.log(hostsValue)
     console.log(subnetsValue)
     console.log(totalHosts)
     console.log(possibleSubnets)
+    console.log(calculatedHosts)
+    console.log(calculatedSubnets)
 
     return {
         subnetMask,

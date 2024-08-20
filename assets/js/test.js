@@ -272,135 +272,135 @@ describe('validateSubnets', function () {
 
 describe('calculateSubnetMask', function () {
   it('should return "0.0.0.0" for /0', function () {
-    chai.expect(calculateSubnetMask("/0")).to.equal("0.0.0.0");
+    chai.expect(calculateSubnetMask(0)).to.equal("0.0.0.0");
   });
 
   it('should return "128.0.0.0" for /1', function () {
-    chai.expect(calculateSubnetMask("/1")).to.equal("128.0.0.0");
+    chai.expect(calculateSubnetMask(1)).to.equal("128.0.0.0");
   });
 
   it('should return "192.0.0.0" for /2', function () {
-    chai.expect(calculateSubnetMask("/2")).to.equal("192.0.0.0");
+    chai.expect(calculateSubnetMask(2)).to.equal("192.0.0.0");
   });
 
   it('should return "224.0.0.0" for /3', function () {
-    chai.expect(calculateSubnetMask("/3")).to.equal("224.0.0.0");
+    chai.expect(calculateSubnetMask(3)).to.equal("224.0.0.0");
   });
 
   it('should return "240.0.0.0" for /4', function () {
-    chai.expect(calculateSubnetMask("/4")).to.equal("240.0.0.0");
+    chai.expect(calculateSubnetMask(4)).to.equal("240.0.0.0");
   });
 
   it('should return "248.0.0.0" for /5', function () {
-    chai.expect(calculateSubnetMask("/5")).to.equal("248.0.0.0");
+    chai.expect(calculateSubnetMask(5)).to.equal("248.0.0.0");
   });
 
   it('should return "252.0.0.0" for /6', function () {
-    chai.expect(calculateSubnetMask("/6")).to.equal("252.0.0.0");
+    chai.expect(calculateSubnetMask(6)).to.equal("252.0.0.0");
   });
 
   it('should return "254.0.0.0" for /7', function () {
-    chai.expect(calculateSubnetMask("/7")).to.equal("254.0.0.0");
+    chai.expect(calculateSubnetMask(7)).to.equal("254.0.0.0");
   });
 
   it('should return "255.0.0.0" for /8', function () {
-    chai.expect(calculateSubnetMask("/8")).to.equal("255.0.0.0");
+    chai.expect(calculateSubnetMask(8)).to.equal("255.0.0.0");
   });
 
   it('should return "255.128.0.0" for /9', function () {
-    chai.expect(calculateSubnetMask("/9")).to.equal("255.128.0.0");
+    chai.expect(calculateSubnetMask(9)).to.equal("255.128.0.0");
   });
 
   it('should return "255.192.0.0" for /10', function () {
-    chai.expect(calculateSubnetMask("/10")).to.equal("255.192.0.0");
+    chai.expect(calculateSubnetMask(10)).to.equal("255.192.0.0");
   });
 
   it('should return "255.224.0.0" for /11', function () {
-    chai.expect(calculateSubnetMask("/11")).to.equal("255.224.0.0");
+    chai.expect(calculateSubnetMask(11)).to.equal("255.224.0.0");
   });
 
   it('should return "255.240.0.0" for /12', function () {
-    chai.expect(calculateSubnetMask("/12")).to.equal("255.240.0.0");
+    chai.expect(calculateSubnetMask(12)).to.equal("255.240.0.0");
   });
 
   it('should return "255.248.0.0" for /13', function () {
-    chai.expect(calculateSubnetMask("/13")).to.equal("255.248.0.0");
+    chai.expect(calculateSubnetMask(13)).to.equal("255.248.0.0");
   });
 
   it('should return "255.252.0.0" for /14', function () {
-    chai.expect(calculateSubnetMask("/14")).to.equal("255.252.0.0");
+    chai.expect(calculateSubnetMask(14)).to.equal("255.252.0.0");
   });
 
   it('should return "255.254.0.0" for /15', function () {
-    chai.expect(calculateSubnetMask("/15")).to.equal("255.254.0.0");
+    chai.expect(calculateSubnetMask(15)).to.equal("255.254.0.0");
   });
 
   it('should return "255.255.0.0" for /16', function () {
-    chai.expect(calculateSubnetMask("/16")).to.equal("255.255.0.0");
+    chai.expect(calculateSubnetMask(16)).to.equal("255.255.0.0");
   });
 
   it('should return "255.255.128.0" for /17', function () {
-    chai.expect(calculateSubnetMask("/17")).to.equal("255.255.128.0");
+    chai.expect(calculateSubnetMask(17)).to.equal("255.255.128.0");
   });
 
   it('should return "255.255.192.0" for /18', function () {
-    chai.expect(calculateSubnetMask("/18")).to.equal("255.255.192.0");
+    chai.expect(calculateSubnetMask(18)).to.equal("255.255.192.0");
   });
 
   it('should return "255.255.224.0" for /19', function () {
-    chai.expect(calculateSubnetMask("/19")).to.equal("255.255.224.0");
+    chai.expect(calculateSubnetMask(19)).to.equal("255.255.224.0");
   });
 
   it('should return "255.255.240.0" for /20', function () {
-    chai.expect(calculateSubnetMask("/20")).to.equal("255.255.240.0");
+    chai.expect(calculateSubnetMask(20)).to.equal("255.255.240.0");
   });
 
   it('should return "255.255.248.0" for /21', function () {
-    chai.expect(calculateSubnetMask("/21")).to.equal("255.255.248.0");
+    chai.expect(calculateSubnetMask(21)).to.equal("255.255.248.0");
   });
 
   it('should return "255.255.252.0" for /22', function () {
-    chai.expect(calculateSubnetMask("/22")).to.equal("255.255.252.0");
+    chai.expect(calculateSubnetMask(22)).to.equal("255.255.252.0");
   });
 
   it('should return "255.255.254.0" for /23', function () {
-    chai.expect(calculateSubnetMask("/23")).to.equal("255.255.254.0");
+    chai.expect(calculateSubnetMask(23)).to.equal("255.255.254.0");
   });
 
   it('should return "255.255.255.0" for /24', function () {
-    chai.expect(calculateSubnetMask("/24")).to.equal("255.255.255.0");
+    chai.expect(calculateSubnetMask(24)).to.equal("255.255.255.0");
   });
 
   it('should return "255.255.255.128" for /25', function () {
-    chai.expect(calculateSubnetMask("/25")).to.equal("255.255.255.128");
+    chai.expect(calculateSubnetMask(25)).to.equal("255.255.255.128");
   });
 
   it('should return "255.255.255.192" for /26', function () {
-    chai.expect(calculateSubnetMask("/26")).to.equal("255.255.255.192");
+    chai.expect(calculateSubnetMask(26)).to.equal("255.255.255.192");
   });
 
   it('should return "255.255.255.224" for /27', function () {
-    chai.expect(calculateSubnetMask("/27")).to.equal("255.255.255.224");
+    chai.expect(calculateSubnetMask(27)).to.equal("255.255.255.224");
   });
 
   it('should return "255.255.255.240" for /28', function () {
-    chai.expect(calculateSubnetMask("/28")).to.equal("255.255.255.240");
+    chai.expect(calculateSubnetMask(28)).to.equal("255.255.255.240");
   });
 
   it('should return "255.255.255.248" for /29', function () {
-    chai.expect(calculateSubnetMask("/29")).to.equal("255.255.255.248");
+    chai.expect(calculateSubnetMask(29)).to.equal("255.255.255.248");
   });
 
   it('should return "255.255.255.252" for /30', function () {
-    chai.expect(calculateSubnetMask("/30")).to.equal("255.255.255.252");
+    chai.expect(calculateSubnetMask(30)).to.equal("255.255.255.252");
   });
 
   it('should return "255.255.255.254" for /31', function () {
-    chai.expect(calculateSubnetMask("/31")).to.equal("255.255.255.254");
+    chai.expect(calculateSubnetMask(31)).to.equal("255.255.255.254");
   });
 
   it('should return "255.255.255.255" for /32', function () {
-    chai.expect(calculateSubnetMask("/32")).to.equal("255.255.255.255");
+    chai.expect(calculateSubnetMask(32)).to.equal("255.255.255.255");
   });
 });
 
