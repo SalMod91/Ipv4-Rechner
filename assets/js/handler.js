@@ -16,6 +16,7 @@ function cidrChange(cidrValue) {
     visualizeWildcardMask(wildcardMask);
     visualizemaxHosts(maxHosts)
     updateInputLimits(cidrValue);
+    handleSubnetInputChange();
 }
 
 /**
