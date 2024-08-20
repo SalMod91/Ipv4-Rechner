@@ -26,6 +26,7 @@ document.getElementById('calculateButton').addEventListener('click', function() 
 
         let results = calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue);
         console.log(results)
+        displayResults(results);
     }
 });
 
@@ -83,6 +84,33 @@ function hideTooltip(inputElement) {
     if (tooltipInstance) {
         tooltipInstance.dispose();
     }
+}
+
+/**
+ * Displays the calculated subnet results in the UI.
+ *
+ * This function updates the content of "Result" HTML elements to show the results of the subnet calculation.
+ *
+ *
+ * @param {Object} results - An object containing the calculated results.
+ * @param {string} results.subnetMask - The calculated subnet mask in dotted decimal notation.
+ * @param {string} results.wildcardMask - The calculated wildcard mask in dotted decimal notation.
+ * @param {string} results.networkAddress - The calculated network address in dotted decimal notation.
+ * @param {string} results.broadcastAddress - The calculated broadcast address in dotted decimal notation.
+ * @param {Object} results.usableIpRange - An object containing the first and last usable IP addresses.
+ * @param {string} results.usableIpRange.firstUsable - The first usable IP address in the range.
+ * @param {string} results.usableIpRange.lastUsable - The last usable IP address in the range.
+ * @param {number} results.totalHosts - The total number of usable hosts within the subnet.
+ * @param {number} results.possibleSubnets - The total number of possible subnets that can be created.
+ */
+function displayResults(results) {
+    document.getElementById('subnetMaskResult').textContent = results.subnetMask;
+    document.getElementById('wildcardMaskResult').textContent = results.wildcardMask;
+    document.getElementById('networkAddressResult').textContent = results.networkAddress;
+    document.getElementById('broadcastAddressResult').textContent = results.broadcastAddress;
+    document.getElementById('usableIpsResult').textContent = `First Usable: ${results.usableIpRange.firstUsable} - Last Usable: ${results.usableIpRange.lastUsable}`;
+    document.getElementById('totalHostsResult').textContent = results.totalHosts;
+    document.getElementById('possibleSubnetsResult').textContent = results.possibleSubnets;
 }
 
 // Temporary alert message to debug code.
