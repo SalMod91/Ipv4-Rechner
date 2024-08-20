@@ -11,6 +11,7 @@ const subnetMaskInput = document.getElementById('subnetMask');
 const wildcardMaskInput = document.getElementById('wildcardMask');
 const hostsInput = document.getElementById('maxHosts');
 const subnetsInput = document.getElementById('numberOfSubnets');
+const subnetContainer = document.getElementById('subnetResults');
 
 
 // Event Listeners
@@ -23,7 +24,7 @@ document.getElementById('calculateButton').addEventListener('click', function() 
         let hostsValue = parseInt(hostsInput.value.trim());
         let subnetsValue = parseInt(subnetsInput.value.trim());
 
-        let results = calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue);
+        let results = calculateNetworkDetails(ipAddressValue, cidrValue, hostsValue, subnetsValue);
         console.log(results)
         displayResults(results);
     }
@@ -92,28 +93,52 @@ function hideTooltip(inputElement) {
 /**
  * Displays the calculated subnet results in the UI.
  *
- * This function updates the content of "Result" HTML elements to show the results of the subnet calculation.
+ * This function updates the UI with the calculated subnet mask, wildcard mask, network and broadcast addresses, 
+ * usable IP range, total addresses, and dynamically populates a table with subnet details.
  *
- *
- * @param {Object} results - An object containing the calculated results.
- * @param {string} results.subnetMask - The calculated subnet mask in dotted decimal notation.
- * @param {string} results.wildcardMask - The calculated wildcard mask in dotted decimal notation.
- * @param {string} results.networkAddress - The calculated network address in dotted decimal notation.
- * @param {string} results.broadcastAddress - The calculated broadcast address in dotted decimal notation.
- * @param {Object} results.usableIpRange - An object containing the first and last usable IP addresses.
- * @param {string} results.usableIpRange.firstUsable - The first usable IP address in the range.
- * @param {string} results.usableIpRange.lastUsable - The last usable IP address in the range.
- * @param {number} results.totalHosts - The total number of usable hosts within the subnet.
- * @param {number} results.possibleSubnets - The total number of possible subnets that can be created.
+ * @param {Object} results - Contains the calculated network details.
+ * @param {string} results.subnetMask - The calculated subnet mask.
+ * @param {string} results.wildcardMask - The calculated wildcard mask.
+ * @param {string} results.networkAddress - The calculated network address.
+ * @param {string} results.broadcastAddress - The calculated broadcast address.
+ * @param {Object} results.usableIpRange - The range of usable IP addresses.
+ * @param {number} results.totalAddresses - The total number of addresses in the network.
+ * @param {Array} [results.subnets] - Optional. An array of subnets with their respective details.
  */
 function displayResults(results) {
     document.getElementById('subnetMaskResult').textContent = results.subnetMask;
     document.getElementById('wildcardMaskResult').textContent = results.wildcardMask;
     document.getElementById('networkAddressResult').textContent = results.networkAddress;
     document.getElementById('broadcastAddressResult').textContent = results.broadcastAddress;
-    document.getElementById('usableIpsResult').textContent = `First Usable: ${results.usableIpRange.firstUsable} - Last Usable: ${results.usableIpRange.lastUsable}`;
-    document.getElementById('totalHostsResult').textContent = results.totalHosts;
-    document.getElementById('possibleSubnetsResult').textContent = results.possibleSubnets;
+    document.getElementById('usableIpsResult').textContent = `Erste nutzbare: ${results.usableIpRange.firstUsable} - Letzte: ${results.usableIpRange.lastUsable}`;
+    document.getElementById('totalAddressesResult').textContent = results.totalAddresses;
+
+    let tableBody = document.querySelector('#subnetResultsTable tbody');
+    tableBody.innerHTML = '';
+
+    if (results.subnets && results.subnets.length > 0) {
+        results.subnets.forEach((subnet, index) => {
+            let row = document.createElement('tr');
+            row.innerHTML = `
+                <th scope="row">${subnet.subnetNumber}</th>
+                <td>${subnet.networkAddress}/${subnet.cidr}</td>
+                <td>${subnet.networkAddress}</td>
+                <td>${subnet.broadcastAddress}</td>
+                <td>${subnet.usableIpRange.firstUsable} - ${subnet.usableIpRange.lastUsable}</td>
+                <td>${subnet.hostsPerSubnet}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Displays warning if the maximum limit of subnets is reached.
+        let maxSubnetsToShow = 256;
+        if (results.subnets.length === maxSubnetsToShow) {
+            let warningMessage = document.createElement('p');
+            warningMessage.classList.add('text-warning');
+            warningMessage.textContent = `Es werden die ersten ${maxSubnetsToShow} Subnetze angezeigt. Bitte grenzen Sie Ihre Eingabe ein, um detailliertere Ergebnisse zu erhalten.`;
+            document.getElementById('subnetResultsContainer').appendChild(warningMessage);
+        }
+    }
 }
 
 // Temporary alert message to debug code.
@@ -144,25 +169,40 @@ function cidrChange(cidrValue) {
 }
 
 /**
- * Updates the maximum number of hosts input limit based on the selected CIDR.
- * This function computes the maximum allowable hosts within a subnet and adjusts the input field accordingly.
- * If the current number of hosts exceeds the maximum value, it provides immediate feedback through tooltips.
- * @param {string} - The CIDR notation chosen by the User which gets parsed into an Integer.
+ * Updates the maximum number of hosts and subnets input limits based on the selected CIDR value.
+ * 
+ * This function calculates the maximum allowable subnets and hosts within a subnet for the given CIDR value.
+ * It then adjusts the relevant input fields and provides feedback to the user via placeholders and tooltips.
+ * 
+ * @param {number} cidrValue - The CIDR value chosen by the user.
  */
 function updateInputLimits(cidrValue) {
-    const maxSubnets = calculateMaxSubnets(cidrValue);
+    let maxSubnets = calculateMaxSubnets(cidrValue);
 
     // Sets the maximum value for the input of subnets.
     subnetsInput.max = maxSubnets;
-    subnetsInput.placeholder = "Max " + maxSubnets + " subnets";
+    if (subnetsInput.max == 1) {
+        subnetsInput.placeholder = "Max " + maxSubnets + " Subnetz";
+    } else {
+        subnetsInput.placeholder = "Max " + maxSubnets + " Subnetze";
+    }
 
     // Calculate and update the read-only hosts field based on just the CIDR value
-    const maxHosts = calculateMaxHosts(cidrValue);
+    let maxHosts = calculateMaxHosts(cidrValue);
     hostsInput.value = maxHosts;
 }
 
+/**
+ * Updates the maximum number of hosts input value based on the selected CIDR and current subnet count.
+ * 
+ * This function calculates the maximum number of hosts per subnet for the given CIDR value and current subnet count,
+ * then updates the input field to reflect this value.
+ * 
+ * @param {number} cidrValue - The CIDR notation chosen by the user.
+ * @param {number} currentSubnets - The current number of subnets.
+ */
 function updateHostsValue(cidrValue, currentSubnets) {
-    const maxHosts = calculateMaxHostsPerSubnet(cidrValue, currentSubnets);
+    let maxHosts = calculateMaxHostsPerSubnet(cidrValue, currentSubnets);
     hostsInput.value = maxHosts;
 }
 
@@ -195,10 +235,10 @@ function validateAndAdjustSubnetInput(inputElement, currentValue, maxValue, cidr
         return;
     } else if (currentValue > maxValue) {
         inputElement.value = maxValue;
-        showTooltip(inputElement, `Value adjusted to the maximum allowed: ${maxValue}`);
+        showTooltip(inputElement, `Wert auf das maximal zulässige angepasst: ${maxValue}`);
     } else if (currentValue <= 0) {
         inputElement.value = 1;
-        showTooltip(inputElement, `The value cannot be less than 1. It has been automatically set to 1.`);
+        showTooltip(inputElement, `Der Wert kann nicht kleiner als 1 sein. Er wurde automatisch auf 1 gesetzt.`);
         updateHostsValue(cidrValue, 1);
     } else {
         hideTooltip(inputElement);
@@ -228,16 +268,6 @@ function validateInputs() {
     if (isNaN(cidrNumber) || !validateCidr(cidrValue)) {
         showError("Invalid Cidr.");
         return false;
-    }
-
-    // Validates Hosts if provided.
-    let hostsValue = hostsInput.value.trim();
-    if (hostsValue !== '') {
-        let hostsNumber = parseInt(hostsValue);
-        if (isNaN(hostsNumber) || !validateHosts(cidrNumber, hostsNumber)) {
-            showError("Invalid Hosts Value.");
-            return false;
-        }
     }
 
     // Validates Subnets if provided.
@@ -277,41 +307,9 @@ function validateIpAddress(ipAddress) {
  * @returns {boolean} - Returns true if the CIDR notation is valid, otherwise false.
  */
 function validateCidr(cidr) {
-    const cidrPattern = /^\/(3[0-2]|[1-2]?[0-9])$/;
+    let cidrPattern = /^\/(3[0-2]|[1-2]?[0-9])$/;
 
     return cidrPattern.test(cidr);
-}
-
-/**
- * Validates the number of hosts based on the provided CIDR value.
- *
- * This function checks whether the number of hosts specified by the user falls within the valid range for the given CIDR value.
- * The valid range is determined by calculating the maximum number of hosts allowed by
- * the CIDR value.
- * 
- * Ensures that the number of hosts is at least 1.
- *
- * @param {integer} cidrValue - The CIDR notation value that defines the subnet mask.
- * @param {integer} hostsValue - The number of hosts specified by the user.
- * @returns {boolean} - Returns true if the hostsValue is valid, otherwise returns false.
- */
-function validateHosts(cidrValue, hostsValue) {
-    const maxHosts = calculateMaxHosts(cidrValue);
-
-    // Allows empty input since hosts are optional.
-    if (hostsValue === '' || hostsValue === null) {
-        return true;
-    }
-
-    if ((cidrValue === 32 || cidrValue === 31) && hostsValue === 0) {
-        return true;
-    }
-
-    if (hostsValue < 1 || hostsValue > maxHosts) {
-        return false;
-    }
-
-    return true;
 }
 
 /**
@@ -327,14 +325,14 @@ function validateHosts(cidrValue, hostsValue) {
  * @returns {boolean} - Returns true if the subnetsValue is valid, otherwise returns false.
  */
 function validateSubnets(cidrValue, subnetsValue) {
-    const maxSubnets = calculateMaxSubnets(cidrValue);
+    let maxSubnets = calculateMaxSubnets(cidrValue);
 
     // Allows empty input since subnets are optional.
     if (subnetsValue === '' || subnetsValue === null) {
         return true;
     }
 
-    const subnetsNumber = parseInt(subnetsValue);
+    let subnetsNumber = parseInt(subnetsValue);
 
     if (isNaN(subnetsNumber) || subnetsNumber < 1 || subnetsNumber > maxSubnets) {
         return false;
@@ -388,7 +386,7 @@ function initializeCidrSelection() {
  */
 function calculateSubnetMask(cidr) {
     // A dictionary that maps the CIDR values to their corresponding subnet masks
-    const cidrToMask = {
+    let cidrToMask = {
         32: "255.255.255.255",
         31: "255.255.255.254",
         30: "255.255.255.252",
@@ -436,9 +434,9 @@ function calculateSubnetMask(cidr) {
  * @param {string} subnetMask - The subnet mask in dotted decimal notation
  */
 function calculateWildcardMask(subnetMask) {
-    const maskOctets = subnetMask.split('.');
-    const wildcardOctets = maskOctets.map(octet => 255 - parseInt(octet));
-    const wildcardMask = wildcardOctets.join('.');
+    let maskOctets = subnetMask.split('.');
+    let wildcardOctets = maskOctets.map(octet => 255 - parseInt(octet));
+    let wildcardMask = wildcardOctets.join('.');
 
     return wildcardMask
 }
@@ -450,8 +448,21 @@ function calculateWildcardMask(subnetMask) {
  * @return {integer} The maximum number of hosts that can be accommodated within the subnet.
  */
 function calculateMaxHosts(cidrValue) {
-    const hostBits = 32 - cidrValue;
+    let hostBits = 32 - cidrValue;
     return hostBits > 0 ? Math.pow(2, hostBits) - 2 : 0;
+}
+
+/**
+ * Calculates the total number of IP addresses in a subnet given its CIDR value.
+ *
+ * The total includes all addresses in the subnet, including the network address and the broadcast address.
+ *
+ * @param {number} cidrValue - The CIDR notation value (e.g., 30 for /30).
+ * @returns {number} The total number of IP addresses in the subnet.
+ */
+function calculateTotalAddresses(cidrValue) {
+    let hostBits = 32 - cidrValue;
+    return Math.pow(2, hostBits);
 }
 
 /**
@@ -477,13 +488,13 @@ function calculateMaxSubnets(cidrValue) {
  */
 function calculateMaxHostsPerSubnet(cidrValue, numberOfSubnets) {
 
-    const bitsForSubnets = Math.ceil(Math.log2(numberOfSubnets));
-    const newCIDR = cidrValue + bitsForSubnets;
-    const effectiveCIDR = Math.min(newCIDR, 32);
+    let bitsForSubnets = Math.ceil(Math.log2(numberOfSubnets));
+    let newCIDR = cidrValue + bitsForSubnets;
+    let effectiveCIDR = Math.min(newCIDR, 32);
     if (newCIDR >= 32) {
         return 0;
     }
-    const hostBits = 32 - effectiveCIDR;
+    let hostBits = 32 - effectiveCIDR;
     return Math.pow(2, hostBits) - 2;
 }
 
@@ -502,27 +513,26 @@ function calculateMaxHostsPerSubnet(cidrValue, numberOfSubnets) {
  *   @property {string} subnetMask - The calculated subnet mask in dotted decimal notation.
  *   @property {string} wildcardMask - The calculated wildcard mask in dotted decimal notation.
  */
-function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
+function calculateNetworkDetails(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
     let subnetMask = calculateSubnetMask(cidrValue)
     let wildcardMask = calculateWildcardMask(subnetMask);
     let networkAddress = calculateNetworkAddress(ipAddressValue, subnetMask);
     let broadcastAddress = calculateBroadcastAddress(networkAddress, subnetMask);
     let usableIpRange = calculateUsableIpRange(networkAddress, broadcastAddress);
-    let totalHosts = calculateMaxHosts(cidrValue)
-    let possibleSubnets = calculateMaxSubnets(cidrValue)
+    let totalAddresses = calculateTotalAddresses(cidrValue)
 
-    // Handle dynamic host or subnet calculations
-    let calculatedHosts = hostsValue;
-    let calculatedSubnets = subnetsValue;
+    let subnets = [];
+    if (subnetsValue > 1) {
+        subnets = calculateSubnets(networkAddress, cidrValue, subnetsValue);
+    }
 
     console.log(ipAddressValue)
     console.log(cidrValue)
     console.log(hostsValue)
     console.log(subnetsValue)
-    console.log(totalHosts)
-    console.log(possibleSubnets)
-    console.log(calculatedHosts)
-    console.log(calculatedSubnets)
+    console.log(totalAddresses)
+    console.log(subnets)
+
 
     return {
         subnetMask,
@@ -530,8 +540,8 @@ function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
         networkAddress,
         broadcastAddress,
         usableIpRange,
-        totalHosts,
-        possibleSubnets
+        totalAddresses,
+        subnets
     }
 }
 
@@ -548,10 +558,10 @@ function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
  *
  */
 function calculateNetworkAddress(ipAddress, subnetMask) {
-    const ipOctets = ipAddress.split('.').map(Number);
-    const maskOctets = subnetMask.split('.').map(Number);
+    let ipOctets = ipAddress.split('.').map(Number);
+    let maskOctets = subnetMask.split('.').map(Number);
     
-    const networkOctets = ipOctets.map((octet, index) => octet & maskOctets[index]);
+    let networkOctets = ipOctets.map((octet, index) => octet & maskOctets[index]);
     return networkOctets.join('.');
 }
 
@@ -568,10 +578,10 @@ function calculateNetworkAddress(ipAddress, subnetMask) {
  * @returns {string} - The calculated broadcast address in dotted decimal notation.
  */
 function calculateBroadcastAddress(networkAddress, subnetMask) {
-    const networkOctets = networkAddress.split('.').map(Number);
-    const maskOctets = subnetMask.split('.').map(Number);
+    let networkOctets = networkAddress.split('.').map(Number);
+    let maskOctets = subnetMask.split('.').map(Number);
 
-    const broadcastOctets = networkOctets.map((octet, index) => octet | (~maskOctets[index] & 255));
+    let broadcastOctets = networkOctets.map((octet, index) => octet | (~maskOctets[index] & 255));
     return broadcastOctets.join('.');
 }
 
@@ -590,8 +600,8 @@ function calculateBroadcastAddress(networkAddress, subnetMask) {
  *   - lastUsable: The last usable IP address as a string.
  */
 function calculateUsableIpRange(networkAddress, broadcastAddress) {
-    const networkOctets = networkAddress.split('.').map(Number);
-    const broadcastOctets = broadcastAddress.split('.').map(Number);
+    let networkOctets = networkAddress.split('.').map(Number);
+    let broadcastOctets = broadcastAddress.split('.').map(Number);
 
     if (networkAddress === broadcastAddress) {
         return {
@@ -600,14 +610,73 @@ function calculateUsableIpRange(networkAddress, broadcastAddress) {
         };
     }
 
-    const firstUsableIp = [...networkOctets];
-    const lastUsableIp = [...broadcastOctets];
+    let firstUsableIp = [...networkOctets];
+    let lastUsableIp = [...broadcastOctets];
 
-    firstUsableIp[3] += 1; // Increment the last octet by 1
-    lastUsableIp[3] -= 1;  // Decrement the last octet by 1
+    firstUsableIp[3] += 1;
+    lastUsableIp[3] -= 1;
 
     return {
         firstUsable: firstUsableIp.join('.'),
         lastUsable: lastUsableIp.join('.')
     };
+}
+
+/**
+ * Calculate subnets within the given network address and CIDR.
+ *
+ * @param {string} networkAddress - The base network address for subnetting.
+ * @param {integer} cidrValue - The CIDR value to use as the base for subnetting.
+ * @param {integer} subnetsValue - The number of subnets to create.
+ * @returns {Array} An array of objects representing each subnet's details.
+ */
+function calculateSubnets(networkAddress, cidrValue, subnetsValue) {
+    let maxSubnetsToShow = 256;
+    let subnets = [];
+    let newCidrValue = cidrValue + Math.ceil(Math.log2(subnetsValue));
+    let subnetIncrement = Math.pow(2, 32 - newCidrValue);
+    let hostsPerSubnet = calculateMaxHosts(newCidrValue);
+
+    let currentAddress = ipToLong(networkAddress);
+
+    for (let i = 0; i < subnetsValue && i < maxSubnetsToShow; i++) {
+        let subnetNetworkAddress = longToIp(currentAddress);
+        let subnetBroadcastAddress = longToIp(currentAddress + subnetIncrement - 1);
+        let subnetUsableRange = calculateUsableIpRange(subnetNetworkAddress, subnetBroadcastAddress);
+
+        subnets.push({
+            subnetNumber: i + 1,
+            cidr: newCidrValue,
+            networkAddress: subnetNetworkAddress,
+            broadcastAddress: subnetBroadcastAddress,
+            usableIpRange: subnetUsableRange, hostsPerSubnet
+        });
+
+        currentAddress += subnetIncrement;
+    }
+
+    return subnets;
+}
+
+/**
+ * Convert an IP address from dotted decimal notation to a 32-bit number.
+ *
+ * @param {string} ip - The IP address in dotted decimal notation.
+ * @returns {number} - The IP address as a 32-bit number.
+ */
+function ipToLong(ip) {
+    return ip.split('.').reduce((acc, octet) => (acc << 8) | parseInt(octet), 0) >>> 0;
+}
+
+/**
+ * Convert a 32-bit number to an IP address in dotted decimal notation.
+ *
+ * @param {number} long - The IP address as a 32-bit number.
+ * @returns {string} - The IP address in dotted decimal notation.
+ */
+function longToIp(long) {
+    return ((long >>> 24) + '.' +
+        (long >> 16 & 255) + '.' +
+        (long >> 8 & 255) + '.' +
+        (long & 255));
 }

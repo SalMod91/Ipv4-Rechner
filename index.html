@@ -124,7 +124,7 @@
             </div>
 
             <!-- Calculate button -->
-            <button type="button" class="btn btn-primary" id="calculateButton">Calculate</button>
+            <button type="button" class="btn btn-primary" id="calculateButton">Berechnen</button>
         </form>
     </div>
 
@@ -135,7 +135,7 @@
             <!-- Subnet Mask Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Subnet Mask</div>
+                    <div class="card-header">Subnetzmaske</div>
                     <div class="card-body">
                         <p id="subnetMaskResult" class="card-text"></p>
                     </div>
@@ -145,7 +145,7 @@
             <!-- Wildcard Mask Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Wildcard Mask</div>
+                    <div class="card-header">Wildcard-Maske</div>
                     <div class="card-body">
                         <p id="wildcardMaskResult" class="card-text"></p>
                     </div>
@@ -155,7 +155,7 @@
             <!-- Network Address Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Network Address</div>
+                    <div class="card-header">Netzwerkadresse</div>
                     <div class="card-body">
                         <p id="networkAddressResult" class="card-text"></p>
                     </div>
@@ -165,7 +165,7 @@
             <!-- Broadcast Address Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Broadcast Address</div>
+                    <div class="card-header">Broadcast-Adresse</div>
                     <div class="card-body">
                         <p id="broadcastAddressResult" class="card-text"></p>
                     </div>
@@ -175,30 +175,42 @@
             <!-- Usable IP Range Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Usable IP Range</div>
+                    <div class="card-header">Nutzbarer IP-Bereich</div>
                     <div class="card-body">
                         <p id="usableIpsResult" class="card-text"></p>
                     </div>
                 </div>
             </div>
 
-            <!-- Total Hosts Result -->
+            <!-- Total Addresses Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Total Hosts</div>
+                    <div class="card-header">Gesamtanzahl der Adressen</div>
                     <div class="card-body">
-                        <p id="totalHostsResult" class="card-text"></p>
+                        <p id="totalAddressesResult" class="card-text"></p>
                     </div>
                 </div>
             </div>
 
-            <!-- Possible Subnets Result -->
-            <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-header">Possible Subnets</div>
-                    <div class="card-body">
-                        <p id="possibleSubnetsResult" class="card-text"></p>
-                    </div>
+            <h3>Subnetze</h3>
+            <!-- Subnets Table -->
+            <div id="subnetResultsContainer" class="col-12">
+                <div class="table-responsive">
+                    <table id="subnetResultsTable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Subnetz</th>
+                                <th scope="col">Netzwerkadresse</th>
+                                <th scope="col">Broadcast-Adresse</th>
+                                <th scope="col">Nutzbarer IP-Bereich</th>
+                                <th scope="col">Nutzbare Hosts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows will be appended here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
