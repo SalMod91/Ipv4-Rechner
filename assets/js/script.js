@@ -20,7 +20,7 @@ subnetsInput.addEventListener('input', handleSubnetInputChange);
 document.getElementById('calculateButton').addEventListener('click', function() {
     if (validateInputs()) {
         let ipAddressValue = ipAddress.value.trim();
-        let cidrValue = cidrSelect.value.trim();
+        let cidrValue = parseInt(cidrSelect.value.replace('/', ''));
         let hostsValue = parseInt(hostsInput.value.trim());
         let subnetsValue = parseInt(subnetsInput.value.trim());
 
@@ -129,6 +129,7 @@ function showError(message) {
  * @param {string} cidrValue - The CIDR notation value selected by the user.
  */
 function cidrChange(cidrValue) {
+    cidrValue = parseInt(cidrValue.replace('/', ''));
     let subnetMask = calculateSubnetMask(cidrValue);
     let wildcardMask = calculateWildcardMask(subnetMask);
 
@@ -143,9 +144,7 @@ function cidrChange(cidrValue) {
  * If the current number of hosts exceeds the maximum value, it provides immediate feedback through tooltips.
  * @param {string} - The CIDR notation chosen by the User which gets parsed into an Integer.
  */
-function updateInputLimits(cidr) {
-    // Removes the slash and parse the CIDR value as an integer.
-    const cidrValue = parseInt(cidr.replace('/', ''));
+function updateInputLimits(cidrValue) {
     
     // Calculates maximum hosts and subnets.
     const maxHosts = calculateMaxHosts(cidrValue);
@@ -450,39 +449,39 @@ function initializeCidrSelection() {
 function calculateSubnetMask(cidr) {
     // A dictionary that maps the CIDR values to their corresponding subnet masks
     const cidrToMask = {
-        "/32": "255.255.255.255",
-        "/31": "255.255.255.254",
-        "/30": "255.255.255.252",
-        "/29": "255.255.255.248",
-        "/28": "255.255.255.240",
-        "/27": "255.255.255.224",
-        "/26": "255.255.255.192",
-        "/25": "255.255.255.128",
-        "/24": "255.255.255.0",
-        "/23": "255.255.254.0",
-        "/22": "255.255.252.0",
-        "/21": "255.255.248.0",
-        "/20": "255.255.240.0",
-        "/19": "255.255.224.0",
-        "/18": "255.255.192.0",
-        "/17": "255.255.128.0",
-        "/16": "255.255.0.0",
-        "/15": "255.254.0.0",
-        "/14": "255.252.0.0",
-        "/13": "255.248.0.0",
-        "/12": "255.240.0.0",
-        "/11": "255.224.0.0",
-        "/10": "255.192.0.0",
-        "/9": "255.128.0.0",
-        "/8": "255.0.0.0",
-        "/7": "254.0.0.0",
-        "/6": "252.0.0.0",
-        "/5": "248.0.0.0",
-        "/4": "240.0.0.0",
-        "/3": "224.0.0.0",
-        "/2": "192.0.0.0",
-        "/1": "128.0.0.0",
-        "/0": "0.0.0.0"
+        32: "255.255.255.255",
+        31: "255.255.255.254",
+        30: "255.255.255.252",
+        29: "255.255.255.248",
+        28: "255.255.255.240",
+        27: "255.255.255.224",
+        26: "255.255.255.192",
+        25: "255.255.255.128",
+        24: "255.255.255.0",
+        23: "255.255.254.0",
+        22: "255.255.252.0",
+        21: "255.255.248.0",
+        20: "255.255.240.0",
+        19: "255.255.224.0",
+        18: "255.255.192.0",
+        17: "255.255.128.0",
+        16: "255.255.0.0",
+        15: "255.254.0.0",
+        14: "255.252.0.0",
+        13: "255.248.0.0",
+        12: "255.240.0.0",
+        11: "255.224.0.0",
+        10: "255.192.0.0",
+        9:  "255.128.0.0",
+        8:  "255.0.0.0",
+        7:  "254.0.0.0",
+        6:  "252.0.0.0",
+        5:  "248.0.0.0",
+        4:  "240.0.0.0",
+        3:  "224.0.0.0",
+        2:  "192.0.0.0",
+        1:  "128.0.0.0",
+        0:  "0.0.0.0"
     };
 
     return cidrToMask[cidr];
@@ -577,17 +576,23 @@ function calculateSubnet(ipAddressValue, cidrValue, hostsValue, subnetsValue) {
     let networkAddress = calculateNetworkAddress(ipAddressValue, subnetMask);
     let broadcastAddress = calculateBroadcastAddress(networkAddress, subnetMask);
     let usableIpRange = calculateUsableIpRange(networkAddress, broadcastAddress);
+    let totalHosts = calculateMaxHosts(cidrValue)
+    let possibleSubnets = calculateMaxSubnets(cidrValue)
     console.log(ipAddressValue)
     console.log(cidrValue)
     console.log(hostsValue)
     console.log(subnetsValue)
+    console.log(totalHosts)
+    console.log(possibleSubnets)
 
     return {
         subnetMask,
         wildcardMask,
         networkAddress,
         broadcastAddress,
-        usableIpRange
+        usableIpRange,
+        totalHosts,
+        possibleSubnets
     }
 }
 
