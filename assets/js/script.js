@@ -11,7 +11,8 @@ const subnetMaskInput = document.getElementById('subnetMask');
 const wildcardMaskInput = document.getElementById('wildcardMask');
 const hostsInput = document.getElementById('maxHosts');
 const subnetsInput = document.getElementById('numberOfSubnets');
-const subnetContainer = document.getElementById('subnetResults');
+const resultsContainer = document.getElementById('results-container');
+const subnetResultsContainer = document.getElementById('subnetResultsContainer')
 
 
 // Event Listeners
@@ -27,6 +28,8 @@ document.getElementById('calculateButton').addEventListener('click', function() 
         let results = calculateNetworkDetails(ipAddressValue, cidrValue, hostsValue, subnetsValue);
         console.log(results)
         displayResults(results);
+
+        resultsContainer.style.display = 'block';
     }
 });
 
@@ -118,6 +121,7 @@ function displayResults(results) {
 
     if (results.subnets && results.subnets.length > 0) {
         results.subnets.forEach((subnet, index) => {
+            subnetResultsContainer.style.display = 'block';
             let row = document.createElement('tr');
             row.innerHTML = `
                 <th scope="row">${subnet.subnetNumber}</th>

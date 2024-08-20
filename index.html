@@ -129,13 +129,13 @@
     </div>
 
     <!-- Results -->
-    <div class="container custom-container mt-5">
-        <h3>Calculation Results</h3>
+    <div class="container custom-container mt-5" id="results-container">
+        <h3>Berechnungsresultate</h3>
         <div class="row">
             <!-- Subnet Mask Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Subnetzmaske</div>
+                    <div class="card-header"><strong>Subnetzmaske</strong></div>
                     <div class="card-body">
                         <p id="subnetMaskResult" class="card-text"></p>
                     </div>
@@ -145,7 +145,7 @@
             <!-- Wildcard Mask Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Wildcard-Maske</div>
+                    <div class="card-header"><strong>Wildcard-Maske</strong></div>
                     <div class="card-body">
                         <p id="wildcardMaskResult" class="card-text"></p>
                     </div>
@@ -155,7 +155,7 @@
             <!-- Network Address Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Netzwerkadresse</div>
+                    <div class="card-header"><strong>Netzwerkadresse</strong></div>
                     <div class="card-body">
                         <p id="networkAddressResult" class="card-text"></p>
                     </div>
@@ -165,7 +165,7 @@
             <!-- Broadcast Address Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Broadcast-Adresse</div>
+                    <div class="card-header"><strong>Broadcast-Adresse</strong></div>
                     <div class="card-body">
                         <p id="broadcastAddressResult" class="card-text"></p>
                     </div>
@@ -175,7 +175,7 @@
             <!-- Usable IP Range Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Nutzbarer IP-Bereich</div>
+                    <div class="card-header"><strong>Nutzbarer IP-Bereich</strong></div>
                     <div class="card-body">
                         <p id="usableIpsResult" class="card-text"></p>
                     </div>
@@ -185,16 +185,17 @@
             <!-- Total Addresses Result -->
             <div class="col-md-6">
                 <div class="card mb-3">
-                    <div class="card-header">Gesamtanzahl der Adressen</div>
+                    <div class="card-header"><strong>Gesamtanzahl der Adressen</strong></div>
                     <div class="card-body">
                         <p id="totalAddressesResult" class="card-text"></p>
                     </div>
                 </div>
             </div>
 
-            <h3>Subnetze</h3>
+            
             <!-- Subnets Table -->
             <div id="subnetResultsContainer" class="col-12">
+                <h3>Subnetze</h3>
                 <div class="table-responsive">
                     <table id="subnetResultsTable" class="table table-bordered table-striped">
                         <thead>

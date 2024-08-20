@@ -31,6 +31,11 @@ input::placeholder {
     pointer-events: none;
 }
 
+/* Result Section */
+#results-container, #subnetResultsContainer {
+    display: none;
+}
+
 /* Media Queries */
 @media screen and (max-width: 992px) {
     #navbarNav {
