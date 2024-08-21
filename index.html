@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    
+    <!-- CSS -->
     <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <title>IPv4 Subnetzrechner</title>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
     <header>
         <!-- Main Navigation Bar -->
@@ -47,176 +51,219 @@
         </nav>
     </header>
 
-    <div class="container custom-container">
-        <form id="subnetCalculator" class="mt-4">
-            <!-- IP Address input field -->
-            <div class="col-md-3 mb-3">
-                <label for="ipAddress" class="form-label">IP Addresse:</label>
-                <input type="text" class="form-control" id="ipAddress" placeholder="192.168.1.1" required maxlength="15">
-            </div>
+    <main>
+        <div class="container custom-container">
+            <form id="subnetCalculator" class="mt-4">
+                <!-- IP Address input field -->
+                <div class="col-md-3 mb-3">
+                    <label for="ipAddress" class="form-label">IP Addresse:</label>
+                    <input type="text" class="form-control" id="ipAddress" placeholder="192.168.1.1" required maxlength="15">
+                </div>
 
-            <!-- CIDR selection field -->
-            <div class="col-md-3 mb-3">
-                <label for="cidrSelect" class="form-label">CIDR:</label>
-                <select class="form-select" id="cidrSelect" placeholder="Choose CIDR">
-                    <option value="/32">/32</option>
-                    <option value="/31">/31</option>
-                    <option value="/30">/30</option>
-                    <option value="/29">/29</option>
-                    <option value="/28">/28</option>
-                    <option value="/27">/27</option>
-                    <option value="/26">/26</option>
-                    <option value="/25">/25</option>
-                    <option value="/24">/24</option>
-                    <option value="/23">/23</option>
-                    <option value="/22">/22</option>
-                    <option value="/21">/21</option>
-                    <option value="/20">/20</option>
-                    <option value="/19">/19</option>
-                    <option value="/18">/18</option>
-                    <option value="/17">/17</option>
-                    <option value="/16">/16</option>
-                    <option value="/15">/15</option>
-                    <option value="/14">/14</option>
-                    <option value="/13">/13</option>
-                    <option value="/12">/12</option>
-                    <option value="/11">/11</option>
-                    <option value="/10">/10</option>
-                    <option value="/9">/9</option>
-                    <option value="/8">/8</option>
-                    <option value="/7">/7</option>
-                    <option value="/6">/6</option>
-                    <option value="/5">/5</option>
-                    <option value="/4">/4</option>
-                    <option value="/3">/3</option>
-                    <option value="/2">/2</option>
-                    <option value="/1">/1</option>
-                    <option value="/0">/0</option>
-                </select>
-            </div>
+                <!-- CIDR selection field -->
+                <div class="col-md-3 mb-3">
+                    <label for="cidrSelect" class="form-label">CIDR:</label>
+                    <select class="form-select" id="cidrSelect" placeholder="Choose CIDR">
+                        <option value="/32">/32</option>
+                        <option value="/31">/31</option>
+                        <option value="/30">/30</option>
+                        <option value="/29">/29</option>
+                        <option value="/28">/28</option>
+                        <option value="/27">/27</option>
+                        <option value="/26">/26</option>
+                        <option value="/25">/25</option>
+                        <option value="/24">/24</option>
+                        <option value="/23">/23</option>
+                        <option value="/22">/22</option>
+                        <option value="/21">/21</option>
+                        <option value="/20">/20</option>
+                        <option value="/19">/19</option>
+                        <option value="/18">/18</option>
+                        <option value="/17">/17</option>
+                        <option value="/16">/16</option>
+                        <option value="/15">/15</option>
+                        <option value="/14">/14</option>
+                        <option value="/13">/13</option>
+                        <option value="/12">/12</option>
+                        <option value="/11">/11</option>
+                        <option value="/10">/10</option>
+                        <option value="/9">/9</option>
+                        <option value="/8">/8</option>
+                        <option value="/7">/7</option>
+                        <option value="/6">/6</option>
+                        <option value="/5">/5</option>
+                        <option value="/4">/4</option>
+                        <option value="/3">/3</option>
+                        <option value="/2">/2</option>
+                        <option value="/1">/1</option>
+                        <option value="/0">/0</option>
+                    </select>
+                </div>
 
-            <!-- Subnet Mask input field (readonly) -->
-            <div class="mb-3 col-md-3">
-                <label for="subnetMask" class="form-label">Subnetzmaske:</label>
-                <input type="text" class="form-control" id="subnetMask" value="255.255.255.255" readonly>
-            </div>
+                <!-- Subnet Mask input field (readonly) -->
+                <div class="mb-3 col-md-3">
+                    <label for="subnetMask" class="form-label">Subnetzmaske:</label>
+                    <input type="text" class="form-control" id="subnetMask" value="255.255.255.255" readonly>
+                </div>
 
-            <!-- Number of Required Hosts input field (readonly) -->
-            <div class="col-md-3 mb-3">
-                <label for="maxHosts" class="form-label">Maximale Anzahl an Hosts:</label>
-                <input type="number" class="form-control" id="maxHosts" readonly>
-            </div>
+                <!-- Number of Required Hosts input field (readonly) -->
+                <div class="col-md-3 mb-3">
+                    <label for="maxHosts" class="form-label">Maximale Anzahl an Hosts:</label>
+                    <input type="number" class="form-control" id="maxHosts" readonly>
+                </div>
 
-            <!-- Number of Subnets input field -->
-            <div class="col-md-3 mb-3">
-                <label for="numberOfSubnets" class="form-label">Anzahl der Subnetze:</label>
-                <input type="number" class="form-control" id="numberOfSubnets" placeholder="Enter number of subnets" min="1">
-            </div>
+                <!-- Number of Subnets input field -->
+                <div class="col-md-3 mb-3">
+                    <label for="numberOfSubnets" class="form-label">Anzahl der Subnetze:</label>
+                    <input type="number" class="form-control" id="numberOfSubnets" placeholder="Enter number of subnets" min="1">
+                </div>
 
-            <!-- Wildcard Mask input field (readonly) -->
-            <div class="mb-3 col-md-3">
-                <label for="wildcardMask" class="form-label">Wildcard-Maske:</label>
-                <input type="text" class="form-control" id="wildcardMask" value="0.0.0.0" readonly>
-            </div>
+                <!-- Wildcard Mask input field (readonly) -->
+                <div class="mb-3 col-md-3">
+                    <label for="wildcardMask" class="form-label">Wildcard-Maske:</label>
+                    <input type="text" class="form-control" id="wildcardMask" value="0.0.0.0" readonly>
+                </div>
 
-            <!-- Calculate button -->
-            <button type="button" class="btn btn-primary" id="calculateButton">Berechnen</button>
-        </form>
-    </div>
+                <!-- Calculate button -->
+                <button type="button" class="btn btn-primary" id="calculateButton">Berechnen</button>
+            </form>
+        </div>
 
-    <!-- Results -->
-    <div class="container custom-container mt-5" id="results-container">
-        <h3>Berechnungsresultate</h3>
-        <div class="row">
-            <!-- Subnet Mask Result -->
-            <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-header"><strong>Subnetzmaske</strong></div>
-                    <div class="card-body">
-                        <p id="subnetMaskResult" class="card-text"></p>
+        <!-- Results -->
+        <div class="container custom-container mt-5" id="results-container">
+            <h3>Berechnungsresultate</h3>
+            <div class="row">
+                <!-- Subnet Mask Result -->
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Subnetzmaske</strong></div>
+                        <div class="card-body">
+                            <p id="subnetMaskResult" class="card-text"></p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Wildcard Mask Result -->
-            <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-header"><strong>Wildcard-Maske</strong></div>
-                    <div class="card-body">
-                        <p id="wildcardMaskResult" class="card-text"></p>
+                <!-- Wildcard Mask Result -->
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Wildcard-Maske</strong></div>
+                        <div class="card-body">
+                            <p id="wildcardMaskResult" class="card-text"></p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Network Address Result -->
-            <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-header"><strong>Netzwerkadresse</strong></div>
-                    <div class="card-body">
-                        <p id="networkAddressResult" class="card-text"></p>
+                <!-- Network Address Result -->
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Netzwerkadresse</strong></div>
+                        <div class="card-body">
+                            <p id="networkAddressResult" class="card-text"></p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Broadcast Address Result -->
-            <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-header"><strong>Broadcast-Adresse</strong></div>
-                    <div class="card-body">
-                        <p id="broadcastAddressResult" class="card-text"></p>
+                <!-- Broadcast Address Result -->
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Broadcast-Adresse</strong></div>
+                        <div class="card-body">
+                            <p id="broadcastAddressResult" class="card-text"></p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Usable IP Range Result -->
-            <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-header"><strong>Nutzbarer IP-Bereich</strong></div>
-                    <div class="card-body">
-                        <p id="usableIpsResult" class="card-text"></p>
+                <!-- Usable IP Range Result -->
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Nutzbarer IP-Bereich</strong></div>
+                        <div class="card-body">
+                            <p id="usableIpsResult" class="card-text"></p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Total Addresses Result -->
-            <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-header"><strong>Gesamtanzahl der Adressen</strong></div>
-                    <div class="card-body">
-                        <p id="totalAddressesResult" class="card-text"></p>
+                <!-- Total Addresses Result -->
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Gesamtanzahl der Adressen</strong></div>
+                        <div class="card-body">
+                            <p id="totalAddressesResult" class="card-text"></p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            
-            <!-- Subnets Table -->
-            <div id="subnetResultsContainer" class="col-12">
-                <h3>Subnetze</h3>
-                <div class="table-responsive">
-                    <table id="subnetResultsTable" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Subnetz</th>
-                                <th scope="col">Netzwerkadresse</th>
-                                <th scope="col">Broadcast-Adresse</th>
-                                <th scope="col">Nutzbarer IP-Bereich</th>
-                                <th scope="col">Nutzbare Hosts</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Rows will be appended here -->
-                        </tbody>
-                    </table>
+                
+                <!-- Subnets Table -->
+                <div id="subnetResultsContainer" class="col-12">
+                    <h3>Subnetze</h3>
+                    <div class="table-responsive">
+                        <table id="subnetResultsTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Subnetz</th>
+                                    <th scope="col">Netzwerkadresse</th>
+                                    <th scope="col">Broadcast-Adresse</th>
+                                    <th scope="col">Nutzbarer IP-Bereich</th>
+                                    <th scope="col">Nutzbare Hosts</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Rows will be appended here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-
-    <div class="container custom-container">
-        Footer
-    </div>
+    <footer class="mt-auto">
+        <div class="container p-4">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 text-white">
+                <h5 class="mb-3" style="letter-spacing: 2px;">Erstellt von:</h5>
+                <p>Salvino Modica</p>
+                <p>Hugo Armando Grande</p>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 text-white">
+                    <h5 class="mb-3" style="letter-spacing: 2px;">Links Salvino</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-1">
+                            <a href="https://github.com/SalMod91" class="text-white" target="_blank" rel="noopener noreferrer" aria-label="Visit Salvino's Github">
+                                <i class="fab fa-github text-white"></i> Salvino Github
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="https://www.linkedin.com/in/salvino-modica-7aa1651b7" class="text-white" target="_blank" rel="noopener noreferrer" aria-label="Visit Salvino's LinkedIn">
+                                <i class="fab fa-linkedin text-white"></i> Salvino LinkedIn
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 text-white">
+                    <h5 class="mb-3" style="letter-spacing: 2px;">Links Hugo</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-1">
+                            <a href="https://github.com/Hgap321" class="text-white" target="_blank" rel="noopener noreferrer" aria-label="Visit Hugo's Github">
+                                <i class="fab fa-github text-white"></i> Hugo Github
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#" class="text-white" target="_blank" rel="noopener noreferrer" aria-label="Visit Hugo's LinkedIn">
+                                <i class="fab fa-linkedin text-white"></i> Hugo LinkedIn
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-3 text-white" style="background-color: rgba(0, 0, 0, 0.2);">
+          © 2024 Copyright:
+          <a class="text-white">Bandidos</a>
+        </div>
+      </footer>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/logic.js"></script>

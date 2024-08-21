@@ -36,6 +36,11 @@ input::placeholder {
     display: none;
 }
 
+/* Footer Section */
+footer {
+    background-color: #0056b3;
+}
+
 /* Media Queries */
 @media screen and (max-width: 992px) {
     #navbarNav {
