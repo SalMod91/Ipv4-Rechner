@@ -94,8 +94,8 @@ function displayResults(results) {
     tableBody.innerHTML = '';
 
     if (results.subnets && results.subnets.length > 0) {
+        subnetResultsContainer.style.display = 'block'; // Show the container if there are results
         results.subnets.forEach((subnet, index) => {
-            subnetResultsContainer.style.display = 'block';
             let row = document.createElement('tr');
             row.innerHTML = `
                 <th scope="row">${subnet.subnetNumber}</th>
@@ -107,6 +107,9 @@ function displayResults(results) {
             `;
             tableBody.appendChild(row);
         });
+    } else {
+        subnetResultsContainer.style.display = 'none'; // Hide the container if there are no results
+    }
 
         // Displays warning if the maximum limit of subnets is reached.
         let maxSubnetsToShow = 256;
@@ -116,7 +119,6 @@ function displayResults(results) {
             warningMessage.textContent = `Es werden die ersten ${maxSubnetsToShow} Subnetze angezeigt. Bitte grenzen Sie Ihre Eingabe ein, um detailliertere Ergebnisse zu erhalten.`;
             document.getElementById('subnetResultsContainer').appendChild(warningMessage);
         }
-    }
 }
 
 // Temporary alert message to debug code.
