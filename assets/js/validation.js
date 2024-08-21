@@ -33,7 +33,7 @@ function validateInputs() {
     // .trim() removes any leading or trailing whitespace from the IP address input.
     let ipAddressValue = ipAddress.value.trim();
     if (!validateIpAddress(ipAddressValue)) {
-        showError(ipAddress, "Invalid IP address.");
+        showError(ipAddress, "Ungültige IP-Adresse.");
         return false;
     }
 
@@ -42,14 +42,14 @@ function validateInputs() {
     let cidrValue = cidrSelect.value.trim();
     let cidrNumber = parseInt(cidrValue.replace('/', ''));
     if (isNaN(cidrNumber) || !validateCidr(cidrValue)) {
-        showError(cidrSelect, "Invalid CIDR.");
+        showError(cidrSelect, "Ungültiger CIDR.");
         return false;
     }
 
     // Validates Subnets if provided.
     let subnetsValue = subnetsInput.value.trim();
     if (!validateSubnets(cidrNumber, subnetsValue)) {
-        showError(subnetsInput, "Invalid Subnets Value.");
+        showError(subnetsInput, "Ungültiger Subnetz-Wert.");
         return false;
     }
 
