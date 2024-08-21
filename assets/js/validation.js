@@ -11,10 +11,10 @@ function validateAndAdjustSubnetInput(inputElement, currentValue, maxValue, cidr
         return;
     } else if (currentValue > maxValue) {
         inputElement.value = maxValue;
-        showTooltip(inputElement, `Wert auf das maximal zulässige angepasst: ${maxValue}`);
+        showError(inputElement, `Wert auf das maximal zulässige angepasst: ${maxValue}`);
     } else if (currentValue <= 0) {
         inputElement.value = 1;
-        showTooltip(inputElement, `Der Wert kann nicht kleiner als 1 sein. Er wurde automatisch auf 1 gesetzt.`);
+        showError(inputElement, `Der Wert kann nicht kleiner als 1 sein. Er wurde automatisch auf 1 gesetzt.`);
         updateHostsValue(cidrValue, 1);
     } else {
         hideTooltip(inputElement);
@@ -33,7 +33,7 @@ function validateInputs() {
     // .trim() removes any leading or trailing whitespace from the IP address input.
     let ipAddressValue = ipAddress.value.trim();
     if (!validateIpAddress(ipAddressValue)) {
-        showError("Invalid IP address.");
+        showError(ipAddress, "Invalid IP address.");
         return false;
     }
 
@@ -42,14 +42,14 @@ function validateInputs() {
     let cidrValue = cidrSelect.value.trim();
     let cidrNumber = parseInt(cidrValue.replace('/', ''));
     if (isNaN(cidrNumber) || !validateCidr(cidrValue)) {
-        showError("Invalid Cidr.");
+        showError(cidrSelect, "Invalid CIDR.");
         return false;
     }
 
     // Validates Subnets if provided.
     let subnetsValue = subnetsInput.value.trim();
     if (!validateSubnets(cidrNumber, subnetsValue)) {
-        showError("Invalid Subnets Value.");
+        showError(subnetsInput, "Invalid Subnets Value.");
         return false;
     }
 

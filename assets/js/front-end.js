@@ -56,29 +56,6 @@ function visualizemaxHosts(maxHosts) {
 }
 
 /**
- * Displays a Bootstrap tooltip with the provided message on the specified input element.
- * The tooltip will automatically hide after 2 seconds.
- * 
- * @param {HTMLElement} inputElement - The input field element where the tooltip should be displayed.
- * @param {string} message - The message to display inside the tooltip.
- */
-function showTooltip(inputElement, message) {
-    let tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
-
-    if (!tooltipInstance) {
-        tooltipInstance = new bootstrap.Tooltip(inputElement, { title: message, trigger: 'manual' });
-    } else {
-        tooltipInstance.setContent({ '.tooltip-inner': message });
-    }
-
-    tooltipInstance.show();
-
-    setTimeout(function() {
-        tooltipInstance.hide();
-    }, 2000);
-}
-
-/**
  * Hides and disposes an existing tooltip on the specified input element.
  * 
  * @param {HTMLElement} inputElement - The input field element from which the tooltip should be removed.
@@ -143,8 +120,22 @@ function displayResults(results) {
 }
 
 // Temporary alert message to debug code.
-function showError(message) {
-    alert(message);
+function showError(inputElement, message) {
+    const tooltipInstance = bootstrap.Tooltip.getInstance(inputElement);
+
+    if (tooltipInstance) {
+        tooltipInstance.dispose();
+    }
+
+    const newTooltipInstance = new bootstrap.Tooltip(inputElement, {
+        title: message,
+        trigger: 'manual',
+        placement: 'right'
+    });
+
+    newTooltipInstance.show();
+
+    setTimeout(() => {
+        newTooltipInstance.hide();
+    }, 2000);
 }
-
-
