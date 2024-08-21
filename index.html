@@ -22,7 +22,7 @@
             <div class="container custom-container">
 
                 <!-- Brand Logo and link to home -->
-                <a class="navbar-brand" href="index.html"aria-label="This logo will redirect you to the homepage">Subnet Calculator</a>
+                <a class="navbar-brand text-white" href="index.html"aria-label="This logo will redirect you to the homepage">Subnet Calculator</a>
 
                 <!-- Toggler Button that appears on small screens (992px) to hide/show the navigation links -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,79 +54,80 @@
     <main>
         <div class="container custom-container">
             <form id="subnetCalculator" class="mt-4">
-                <!-- IP Address input field -->
-                <div class="col-md-3 mb-3">
-                    <label for="ipAddress" class="form-label">IP Addresse:</label>
-                    <input type="text" class="form-control" id="ipAddress" placeholder="192.168.1.1" required maxlength="15">
-                </div>
+    <div class="row">
+        <!-- Left column for IP, CIDR, and Number of Subnets -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="ipAddress" class="form-label">IP Adresse:</label>
+                <input type="text" class="form-control" id="ipAddress" placeholder="192.168.1.1" required maxlength="15">
+            </div>
+            <div class="mb-3">
+                <label for="cidrSelect" class="form-label">CIDR:</label>
+                <select class="form-select" id="cidrSelect" placeholder="Choose CIDR">
+                    <option value="/32">/32</option>
+                    <option value="/31">/31</option>
+                    <option value="/30">/30</option>
+                    <option value="/29">/29</option>
+                    <option value="/28">/28</option>
+                    <option value="/27">/27</option>
+                    <option value="/26">/26</option>
+                    <option value="/25">/25</option>
+                    <option value="/24">/24</option>
+                    <option value="/23">/23</option>
+                    <option value="/22">/22</option>
+                    <option value="/21">/21</option>
+                    <option value="/20">/20</option>
+                    <option value="/19">/19</option>
+                    <option value="/18">/18</option>
+                    <option value="/17">/17</option>
+                    <option value="/16">/16</option>
+                    <option value="/15">/15</option>
+                    <option value="/14">/14</option>
+                    <option value="/13">/13</option>
+                    <option value="/12">/12</option>
+                    <option value="/11">/11</option>
+                    <option value="/10">/10</option>
+                    <option value="/9">/9</option>
+                    <option value="/8">/8</option>
+                    <option value="/7">/7</option>
+                    <option value="/6">/6</option>
+                    <option value="/5">/5</option>
+                    <option value="/4">/4</option>
+                    <option value="/3">/3</option>
+                    <option value="/2">/2</option>
+                    <option value="/1">/1</option>
+                    <option value="/0">/0</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="numberOfSubnets" class="form-label">Anzahl der Subnetze:</label>
+                <input type="number" class="form-control" id="numberOfSubnets" placeholder="Enter number of subnets" min="1">
+            </div>
+        </div>
 
-                <!-- CIDR selection field -->
-                <div class="col-md-3 mb-3">
-                    <label for="cidrSelect" class="form-label">CIDR:</label>
-                    <select class="form-select" id="cidrSelect" placeholder="Choose CIDR">
-                        <option value="/32">/32</option>
-                        <option value="/31">/31</option>
-                        <option value="/30">/30</option>
-                        <option value="/29">/29</option>
-                        <option value="/28">/28</option>
-                        <option value="/27">/27</option>
-                        <option value="/26">/26</option>
-                        <option value="/25">/25</option>
-                        <option value="/24">/24</option>
-                        <option value="/23">/23</option>
-                        <option value="/22">/22</option>
-                        <option value="/21">/21</option>
-                        <option value="/20">/20</option>
-                        <option value="/19">/19</option>
-                        <option value="/18">/18</option>
-                        <option value="/17">/17</option>
-                        <option value="/16">/16</option>
-                        <option value="/15">/15</option>
-                        <option value="/14">/14</option>
-                        <option value="/13">/13</option>
-                        <option value="/12">/12</option>
-                        <option value="/11">/11</option>
-                        <option value="/10">/10</option>
-                        <option value="/9">/9</option>
-                        <option value="/8">/8</option>
-                        <option value="/7">/7</option>
-                        <option value="/6">/6</option>
-                        <option value="/5">/5</option>
-                        <option value="/4">/4</option>
-                        <option value="/3">/3</option>
-                        <option value="/2">/2</option>
-                        <option value="/1">/1</option>
-                        <option value="/0">/0</option>
-                    </select>
-                </div>
+        <!-- Right column for Subnet Mask, Wildcard Mask, and Number of Hosts -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="subnetMask" class="form-label">Subnetzmaske:</label>
+                <input type="text" class="form-control" id="subnetMask" value="255.255.255.255" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="wildcardMask" class="form-label">Wildcard-Maske:</label>
+                <input type="text" class="form-control" id="wildcardMask" value="0.0.0.0" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="maxHosts" class="form-label">Maximale Anzahl an Hosts:</label>
+                <input type="number" class="form-control" id="maxHosts" readonly>
+            </div>
+        </div>
+    </div>
 
-                <!-- Subnet Mask input field (readonly) -->
-                <div class="mb-3 col-md-3">
-                    <label for="subnetMask" class="form-label">Subnetzmaske:</label>
-                    <input type="text" class="form-control" id="subnetMask" value="255.255.255.255" readonly>
-                </div>
-
-                <!-- Number of Required Hosts input field (readonly) -->
-                <div class="col-md-3 mb-3">
-                    <label for="maxHosts" class="form-label">Maximale Anzahl an Hosts:</label>
-                    <input type="number" class="form-control" id="maxHosts" readonly>
-                </div>
-
-                <!-- Number of Subnets input field -->
-                <div class="col-md-3 mb-3">
-                    <label for="numberOfSubnets" class="form-label">Anzahl der Subnetze:</label>
-                    <input type="number" class="form-control" id="numberOfSubnets" placeholder="Enter number of subnets" min="1">
-                </div>
-
-                <!-- Wildcard Mask input field (readonly) -->
-                <div class="mb-3 col-md-3">
-                    <label for="wildcardMask" class="form-label">Wildcard-Maske:</label>
-                    <input type="text" class="form-control" id="wildcardMask" value="0.0.0.0" readonly>
-                </div>
-
-                <!-- Calculate button -->
-                <button type="button" class="btn btn-primary" id="calculateButton">Berechnen</button>
-            </form>
+    <div class="row">
+        <div class="col-12 text-center mb-3">
+            <button type="button" class="btn btn-primary" id="calculateButton">Berechnen</button>
+        </div>
+    </div>
+</form>
         </div>
 
         <!-- Results -->

@@ -14,6 +14,10 @@
     color: #ffffff !important;
 }
 
+.active {
+    text-decoration: underline;
+}
+
 .navbar .nav-link:hover {
     background-color: #0056b3 !important;
 }
