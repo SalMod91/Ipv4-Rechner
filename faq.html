@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+        <!-- Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- CSS -->
+        <link rel="stylesheet" href="/assets/css/style.css">
+    
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+        <title>IPv4 Subnetzrechner</title>
+    </head>
+    <body>
+        <header>
+            <!-- Main Navigation Bar -->
+            <nav class="navbar navbar-expand-md">
+                <div class="container custom-container">
+    
+                    <!-- Brand Logo and link to home -->
+                    <a class="navbar-brand text-white" href="index.html"aria-label="This logo will redirect you to the homepage">Subnet Calculator</a>
+    
+                    <!-- Toggler Button that appears on small screens (992px) to hide/show the navigation links -->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+    
+                    <!-- Contains navigation links that collapse into the toggler menu on small screens (992px) -->
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <!-- Navigation links, aligned to the right side of the navbar -->
+                        <ul class="navbar-nav ms-auto">
+                            <!-- Active navigation link showing the user which page they are currently on -->
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="index.html" aria-label="This link will redirect you to the homepage">Home</a>
+                            </li>
+                            <!-- Link to the subnet calculation page -->
+                            <li class="nav-item">
+                                <a class="nav-link active" href="faq.html" aria-label="This link will redirect you to the calculation page">FAQ</a>
+                            </li>
+                            <!-- Link to the About Us page -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="unit_test.html" aria-label="This link will redirect you to the About Us page">About Us</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container custom-container my-5 w-40">
+            <h1 class="mb-4">IP-Rechner</h1>
+            <p>Wenn Sie ein großes Netzwerk aufbauen, kann es manchmal zu groß werden, um es zu handhaben kann nicht nur schwierig zu verwalten sein, sondern auch den Verkehr verlangsamen und große Sicherheitsrisiken darstellen.</p> 
+            <p>Aufteilen dieses großen Netzwerks in kleinere Netzwerke – ein Vorgang, der als „Subnetting“ bezeichnet wird – kann die Netzwerkeffizienz erhöhen, es sicherer machen und die Wartung erleichtern.</p>
+            <p>Um jedoch ein Subnetz zu erstellen, müssen Sie verschiedene Informationen berechnen, um Netzwerkprobleme, wie sich überlappende Subnetze, zu verhindern. Dies kann geistig zeitaufwendig sein, da es die Verwendung von Basis-2-Zahlen und verschiedenen Gleichungen erfordert.</p>
+            <p>Um die Dinge zu erleichtern, verwendet der IP-Rechner zwei Informationen – eine IP-Adresse und ihre entsprechende Netzmaske –, um schnell diese Informationen für Sie zu berechnen.</p>
+            
+            <h3>Welche Informationen kann ich aus einer IP-Adresse und einer Netzmaske erhalten?</h3>
+            <p>Indem Sie eine IP-Adresse und ihre entsprechende Netzmaske (CIDR) eingeben, wird unser Tool Ihnen mitteilen, ihre Broadcast-Adresse, den Bereich der Adressen, den sie umfasst, und mehr.</p>
+            <p>Mit all diesen Infos können Sie schnell Ihr Subnetz aufbauen, ohne sich Sorgen machen zu müssen, ob Ihre geistigen Berechnungen korrekt sind.</p>
+        
+            <h3>Wie benutze ich diesen IP-Rechner?</h3>
+            <p>Zuerst müssen Sie sowohl eine IP-Adresse als auch eine Netzmaske eingeben. Das Tool funktioniert nicht, wenn Sie nur ein Feld ausfüllen. Sie können mit unserem Tool IPv4-Adressen verwenden. Wenn Sie möchten, können Sie auch eine Anzahl an Subnetzen eingeben.</p>
+            <p>Wenn Sie beide Angaben eingeben, drücken Sie auf den „Berechnen“-Knopf. Unser Tool wird alle Berechnungen für Sie durchführen und Ihnen die genauen Informationen geben, die Sie benötigen, um Ihr Subnetz aufzubauen.</p>
+        </main>
+
+        <footer class="mt-auto">
+            <div class="container p-4">
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 mb-4 text-white">
+                    <h5 class="mb-3" style="letter-spacing: 2px;">Erstellt von:</h5>
+                    <p>Salvino Modica</p>
+                    <p>Hugo Armando Grande</p>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4 text-white">
+                        <h5 class="mb-3" style="letter-spacing: 2px;">Links Salvino</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-1">
+                                <a href="https://github.com/SalMod91" class="text-white" target="_blank" rel="noopener noreferrer" aria-label="Visit Salvino's Github">
+                                    <i class="fab fa-github text-white"></i> Salvino Github
+                                </a>
+                            </li>
+                            <li class="mb-1">
+                                <a href="https://www.linkedin.com/in/salvino-modica-7aa1651b7" class="text-white" target="_blank" rel="noopener noreferrer" aria-label="Visit Salvino's LinkedIn">
+                                    <i class="fab fa-linkedin text-white"></i> Salvino LinkedIn
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4 text-white">
+                        <h5 class="mb-3" style="letter-spacing: 2px;">Links Hugo</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-1">
+                                <a href="https://github.com/Hgap321" class="text-white" target="_blank" rel="noopener noreferrer" aria-label="Visit Hugo's Github">
+                                    <i class="fab fa-github text-white"></i> Hugo Github
+                                </a>
+                            </li>
+                            <li class="mb-1">
+                                <a href="#" class="text-white" target="_blank" rel="noopener noreferrer" aria-label="Visit Hugo's LinkedIn">
+                                    <i class="fab fa-linkedin text-white"></i> Hugo LinkedIn
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center p-3 text-white" style="background-color: rgba(0, 0, 0, 0.2);">
+              © 2024 Copyright:
+              <a class="text-white">Bandidos</a>
+            </div>
+          </footer>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="assets/js/logic.js"></script>
+        <script src="assets/js/validation.js"></script>
+        <script src="assets/js/handler.js"></script>
+        <script src="assets/js/front-end.js"></script>
+    </body>
+</html>
