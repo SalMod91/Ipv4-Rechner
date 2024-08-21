@@ -150,14 +150,6 @@ function calculateNetworkDetails(ipAddressValue, cidrValue, hostsValue, subnetsV
         subnets = calculateSubnets(networkAddress, cidrValue, subnetsValue);
     }
 
-    console.log(ipAddressValue)
-    console.log(cidrValue)
-    console.log(hostsValue)
-    console.log(subnetsValue)
-    console.log(totalAddresses)
-    console.log(subnets)
-
-
     return {
         subnetMask,
         wildcardMask,

@@ -26,7 +26,6 @@ document.getElementById('calculateButton').addEventListener('click', function() 
         let subnetsValue = parseInt(subnetsInput.value.trim());
 
         let results = calculateNetworkDetails(ipAddressValue, cidrValue, hostsValue, subnetsValue);
-        console.log(results)
         displayResults(results);
 
         resultsContainer.style.display = 'block';
