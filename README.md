@@ -1,40 +1,61 @@
-## Gitpod Reminders
+## Einführung
 
-To run a frontend (HTML, CSS, Javascript only) application in Gitpod, in the terminal, type:
+"Ipv-4 Subnetzrechner" ist eine Website eines fiktiven Technologieunternehmens, die speziell dafür entwickelt wurde, die Berechnung von IPv4-Subnetzen zu erleichtern. Die Plattform ermöglicht es Benutzern, effizient IPv4-Adressen und deren Subnetze zu analysieren und zu berechnen, was besonders nützlich für Netzwerkadministratoren und IT-Profis ist.
 
-python3 -m http.server
+Diese Anwendung zielt darauf ab, eine benutzerfreundliche Schnittstelle zu bieten, über die Benutzer schnell Subnetzinformationen wie Netzwerkadressen, Broadcast-Adressen, nutzbare IP-Bereiche und mehr generieren können. Funktionen zur Validierung von IP-Adressen und CIDR-Notationen sind integriert, um die Genauigkeit der Ergebnisse zu gewährleisten.
 
-A blue button should appear to click: _Make Public_,
+Die "Tech Nova" IPv4 Subnetzrechner-Website ist bereits live und kann über den folgenden Link erreicht werden: [IPv4 Subnetzrechner von Tech Nova](https://salmod91.github.io/Ipv4-Rechner/)
 
-Another blue button should appear to click: _Open Browser_.
+![Responsive Screenshot](assets/media/readme/responsive.png)
 
-To run a backend Python file, type `python3 app.py` if your Python file is named `app.py`, of course.
+## Inhaltsverzeichnis
+- [Einführung](#Einführung)
+- [Benutzererfahrung (UX)](#ux)
+    - [Umfang & Strategie](#umfang--strategie)
+        - [Projektzweck](#projektzweck)
+        - [Projektziel](#projektziel)
+        - [Zielgruppe](#zielgruppe)
+        - [Kommunikation](#kommunikation)
+        - [Ziele der aktuellen Benutzer](#ziele-der-aktuellen-benutzer)
+        - [Ziele der neue Benutzer](#ziele-neuer-benutzer)
+        - [User Stories](#user-stories)
+    - [Struktur](#struktur)
 
-A blue button should appear to click: _Make Public_,
 
-Another blue button should appear to click: _Open Browser_.
+## Benutzererfahrung (UX)
 
-By Default, Gitpod gives you superuser security privileges. Therefore, you do not need to use the `sudo` (superuser do) command in the bash terminal in any of the lessons.
+### Umfang & Strategie
+<details>
+<summary>Click to expand</summary>
 
-To log into the Heroku toolbelt CLI:
 
-1. Log in to your Heroku account and go to *Account Settings* in the menu under your avatar.
-2. Scroll down to the *API Key* and click *Reveal*
-3. Copy the key
-4. In Gitpod, from the terminal, run `heroku_config`
-5. Paste in your API key when asked
+#### Projektzweck
+Die Website „IPv4 Subnetzrechner“ zielt darauf ab, Benutzern ein umfassendes Werkzeug zur Verfügung zu stellen, um IPv4-Subnetze effizient zu berechnen und zu analysieren. Sie bietet wesentliche Informationen über Netzwerkkonfigurationen, wie Netzwerkadressen, Broadcast-Adressen, nutzbare IP-Bereiche und mehr, in einer interaktiven Art und Weise. Benutzer können durch einfaches Auswählen von CIDR-Notationen und Eingabe von IP-Adressen sofort detaillierte Ergebnisse erhalten.
 
-You can now use the `heroku` CLI program - try running `heroku apps` to confirm it works. This API key is unique and private to you, so do not share it. If you accidentally make it public, you can create a new one with _Regenerate API Key_.
+#### Projektziel
+Entwickeln einer Website, die Nutzern eine intuitive und informative Benutzeroberfläche zur Berechnung von IPv4-Subnetzen bietet.
 
-### Connecting your Mongo database
+#### Zielgruppe
+Die Zielgruppe des „IPv4 Subnetzrechners“ umfasst vor allem Netzwerkadministratoren und IT-Profis, die eine präzise und effiziente Werkzeug zur Analyse und Berechnung von IPv4-Subnetzen benötigen. Dies schließt sowohl Technikbegeisterte ein, die ein tieferes Verständnis für Netzwerkstrukturen suchen, als auch Fachleute in Unternehmen, die täglich mit der Planung und Optimierung von Netzwerkinfrastrukturen betraut sind.
 
-- **Connect to Mongo CLI on a IDE**
-- navigate to your MongoDB Clusters Sandbox
-- click **"Connect"** button
-- select **"Connect with the MongoDB shell"**
-- select **"I have the mongo shell installed"**
-- choose **mongosh (2.0 or later)** for : **"Select your mongo shell version"**
-- choose option: **"Run your connection string in your command line"**
-- in the terminal, paste the copied code `mongo "mongodb+srv://<CLUSTER-NAME>.mongodb.net/<DBname>" --apiVersion 1 --username <USERNAME>`
-  - replace all `<angle-bracket>` keys with your own data
-- enter password _(will not echo **\*\*\*\*** on screen)_
+#### Kommunikation
+Die Website ist so strukturiert, dass Benutzer bei ihrer Ankunft sofort eine klare und zugängliche Übersicht über das Angebot der Seite erhalten, ohne von zu vielen Informationen überwältigt zu werden. Die Startseite fasst effektiv die Schlüsselbereiche und potenziellen Gründe für Ihren Besuch zusammen, was von Beginn an ein nahtloses Navigationserlebnis ermöglicht.
+
+#### Ziele der aktuellen Benutzer
+- Dass die Besucher stets über die Netzwerkkonfigurationsmöglichkeiten auf dem Laufenden gehalten werden.
+- Den Administratoren eine benutzerfreundliche Schnittstelle bereitzustellen, um Netzwerkeinstellungen und -konfigurationen zu aktualisieren.
+
+#### Ziele neuer Benutzer
+- Die Seite leicht navigieren zu können und die bereitgestellten Informationen klar zu verstehen.
+- Neue Benutzer über die Funktionen und den Zweck des IPv4-Rechners zu informieren.
+
+
+#### User Stories
+
+</details>
+
+### Struktur
+<details>
+<summary>Click to expand</summary>
+
+</details>

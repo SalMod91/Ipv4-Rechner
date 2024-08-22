@@ -10,11 +10,9 @@ function cidrChange(cidrValue) {
     cidrValue = parseInt(cidrValue.replace('/', ''));
     let subnetMask = calculateSubnetMask(cidrValue);
     let wildcardMask = calculateWildcardMask(subnetMask);
-    let maxHosts = calculateMaxHosts(cidrValue)
 
     visualizeSubnetMask(subnetMask);
     visualizeWildcardMask(wildcardMask);
-    visualizemaxHosts(maxHosts)
     updateInputLimits(cidrValue);
     handleSubnetInputChange();
 }
@@ -43,19 +41,7 @@ function updateInputLimits(cidrValue) {
     hostsInput.value = maxHosts;
 }
 
-/**
- * Updates the maximum number of hosts input value based on the selected CIDR and current subnet count.
- * 
- * This function calculates the maximum number of hosts per subnet for the given CIDR value and current subnet count,
- * then updates the input field to reflect this value.
- * 
- * @param {number} cidrValue - The CIDR notation chosen by the user.
- * @param {number} currentSubnets - The current number of subnets.
- */
-function updateHostsValue(cidrValue, currentSubnets) {
-    let maxHosts = calculateMaxHostsPerSubnet(cidrValue, currentSubnets);
-    hostsInput.value = maxHosts;
-}
+
 
 /**
  * Handles input changes on the subnet input field by validating and adjusting its value.
