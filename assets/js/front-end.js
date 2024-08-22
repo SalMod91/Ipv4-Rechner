@@ -13,24 +13,33 @@ const hostsInput = document.getElementById('maxHosts');
 const subnetsInput = document.getElementById('numberOfSubnets');
 const resultsContainer = document.getElementById('results-container');
 const subnetResultsContainer = document.getElementById('subnetResultsContainer')
+const calculateButton = document.getElementById('calculateButton')
 
 
 // Event Listeners
-cidrSelect.addEventListener('change', function () {cidrChange(this.value);});
-subnetsInput.addEventListener('input', handleSubnetInputChange);
-document.getElementById('calculateButton').addEventListener('click', function() {
-    if (validateInputs()) {
-        let ipAddressValue = ipAddress.value.trim();
-        let cidrValue = parseInt(cidrSelect.value.replace('/', ''));
-        let hostsValue = parseInt(hostsInput.value.trim());
-        let subnetsValue = parseInt(subnetsInput.value.trim());
+if (cidrSelect) {
+    cidrSelect.addEventListener('change', function() {
+        cidrChange(this.value);
+    });
+};
+if (subnetsInput) {
+    subnetsInput.addEventListener('input', handleSubnetInputChange);
+};
+if (calculateButton) {
+    calculateButton.addEventListener('click', function() {
+        if (validateInputs()) {
+            let ipAddressValue = ipAddress.value.trim();
+            let cidrValue = parseInt(cidrSelect.value.replace('/', ''));
+            let hostsValue = parseInt(hostsInput.value.trim());
+            let subnetsValue = parseInt(subnetsInput.value.trim());
 
-        let results = calculateNetworkDetails(ipAddressValue, cidrValue, hostsValue, subnetsValue);
-        displayResults(results);
+            let results = calculateNetworkDetails(ipAddressValue, cidrValue, hostsValue, subnetsValue);
+            displayResults(results);
 
-        resultsContainer.style.display = 'block';
-    }
-});
+            resultsContainer.style.display = 'block';
+        }
+    });
+};
 
 
 /**
